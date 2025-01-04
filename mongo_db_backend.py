@@ -5,9 +5,12 @@ import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings,GoogleGenerativeAI
 from bson import ObjectId
 import streamlit as st
-
+import random
 from constants import GOOGLE_API_KEY, MONGODB_URI
 
+
+def generate_12_digit_number():
+    return random.randint(10**11, 10**12 - 1)
 class MongoDB:
     def __init__(self):
         uri = MONGODB_URI
@@ -57,8 +60,12 @@ class MongoDB:
 
     
     def person_id(self,name,dob,address):
-        name=name
+        
         person_obj = None 
+        items = []
+
+        name=name
+        
 
         db = self.client['Accounts']
         collection = db['accounts_details']
@@ -68,14 +75,15 @@ class MongoDB:
             results_for_matching_name = collection.find({"name":name})
             results_list = [document for document in results_for_matching_name]
             # print(results_list)
-            if len(results_list) < 1:
+            if len(results_list) == 0:
                 #new customer (in case of documents like application form)
-
-                person_obj = collection.insert_one({'name':name,"dob":dob,"address":address})
+                account_number = generate_12_digit_number()
+                
+                person_obj = collection.insert_one({'name':name,"dob":dob,"address":address,"acc_no":account_number})
                 
                                 
-
-                person_obj = collection.find_one({'name':name})
+                person_obj = "found"
+                items = [collection.find_one({'name':name})]
                 
 
             elif len(results_list) > 1:
@@ -93,12 +101,16 @@ class MongoDB:
                         query_vector = self.generate_embeddings([address])[0]
                 
                         max_similarity, max_index = self.find_most_similar_vector(query_vector, vector_list)
-                        if(max_similarity)>=0.9 :
+                        if max_similarity >=0.9 :
                             person_obj = [document for document in results_for_matching_name_and_dob if document['address']==address_list[max_index]]
                         else:
-                            print('Passed to review')
+                            person_obj = "found"
+                            
+                            items = results_for_matching_name_and_dob
+
                     elif len(results_for_matching_name_and_dob) < 1:
-                        print('passed to review')
+                        person_obj = "list_of_accounts"
+                        items = results_for_matching_name_and_dob
 
                 elif address:
                     #no dob found in document so trying to match address
@@ -111,18 +123,23 @@ class MongoDB:
 
                     print(max_similarity,max_index)
                     if(max_similarity)>=0.9 :
-                        person_obj = [document for document in results_list if document['address']==address_list[max_index]]
+                        person_obj = "found"
+                        items = results_list
                     else:
-                        print('Passed to review')
+                        person_obj = "list_of_accounts"
+                        items = results_list
                 else:
                     # no dob and address for people more than 1 with same name, then passed to review ( very rare )
-                    print('passed to review')
+                    person_obj = "list_of_accounts"
+                    items = results_list
+                    
             elif len(results_list) == 1:
 
                 #only one customer with that name
-                person_obj = results_list[0]
+                person_obj = "found"
+                items = results_list
 
-        return person_obj
+        return person_obj, items
     
     def insert_document(self,account,file_document,document_type):
         db = self.client['Accounts']
