@@ -158,6 +158,8 @@ class MongoDB:
     def insert_document(self,account,file_document,document_type):
         db = self.client['Accounts']
         collection = db['accounts_details']
+        if not isinstance(account['_id'], ObjectId):
+            account['_id'] = ObjectId(account['_id'])
         insert_done = collection.update_one({'_id':account['_id']}, {
         '$set': {'name': account['name'].lower()},          # Update operation for 'name'
         '$push': {'uploaded_documents': file_document}  # Push operation for 'uploaded_documents'
@@ -174,7 +176,7 @@ class MongoDB:
         collection2 = db2[document_type]
         file_document['name'] = account['name'].lower()
         insert_done2 = collection2.insert_one(file_document)
-
+        print(insert_done,insert_done1,insert_done2)
         return insert_done and insert_done1 and insert_done2
 
     def retrieve_documents(self,account_no):

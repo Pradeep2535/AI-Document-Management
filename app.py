@@ -318,17 +318,21 @@ def upload_file():
                         acc_no = i['acc_no']
                         new_dict['name'] = name
                         new_dict['acc_no'] = acc_no
+                        new_dict['_id'] = str(i['_id'])
                         new_accounts.append(new_dict)
 
-                    accounts = dict(new_accounts)
-                    
+                    accounts = list(new_accounts)
+                    file.seek(0)
                     upload_status = "display_accounts"
-
+                    file_content = base64.b64encode(file.read()).decode('utf-8')
+                    
                     return jsonify({
                         "upload_status" : upload_status,
                         "file_document" : file_document,
                         "document_type" : document_type,
-                        "accounts" : accounts
+                        "accounts" : accounts,
+                        "file_data":file_content
+                        
                     })
                 
 @app.route("/upload_file_selected_account",methods = ['POST'])
@@ -341,17 +345,55 @@ def upload_file_for_selected_account():
     file_document = data.get("file_document")
     document_type = data.get("document_type")
     account = data.get("account")
-    file_document['file_name'] = account["acc_no"]+"_"+ document_type
+    file_content = data.get("file_data")
+    file_data = base64.b64decode(file_content)
+    file_document['file_name'] = str(account["acc_no"])+"_"+ document_type
     result = mongo_client.insert_document(account,file_document,document_type)
 
     if result:
         upload_status = 'success'                   
     else:
         upload_status = 'network_error'
-    
+    folder_name1 = "Documents"
+            
+    internal_folder_name1 = document_type
+
+    folder_id1 = create_or_get_folder(folder_name1)
+    nested_folder_id1 = create_nested_folders(internal_folder_name1,folder_id1)
+    # file.seek(0)
+    with NamedTemporaryFile(delete=False) as temp_file1:
+        temp_file1.write(file_data)
+        temp_file1.flush()
+        temp_file1_path = temp_file1.name
+
+    res1 = upload_file_to_folder(temp_file1, str(account["acc_no"]) +"_"+account["name"], nested_folder_id1)
+
+
+                    #Person-wise Heirarchy in Drive
+                    
+    # file.seek(0)
+
+    folder_name2 = "Account_Holders"
+
+    internal_folder_name2 = account["name"]
+    print("pm",type(internal_folder_name2))
+    folder_id2 = create_or_get_folder(folder_name2)
+    nested_folder_id2 = create_nested_folders(str(account["acc_no"]) +'_'+ str(internal_folder_name2),folder_id2)
+
+    with NamedTemporaryFile(delete=False) as temp_file2:
+        temp_file2.write(file_data)
+        temp_file2.flush()
+        temp_file2_path = temp_file2.name
+
+    res2 = upload_file_to_folder(temp_file2, document_type, nested_folder_id2)
+                    
+    print(res1,res2)
     return jsonify({
-        "upload_status" : upload_status
+         "upload_status" : upload_status
     })
+    
+
+
 
 @app.route("/chatbot_acc_no", methods = ['POST'])
 def chatbot_account_no_confirmation():
