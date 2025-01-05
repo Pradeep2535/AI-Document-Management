@@ -163,8 +163,20 @@ class MongoDB:
 
         return insert_done and insert_done1 and insert_done2
 
+    def retrieve_documents(self,account_no):
+        base64_data_list = []
 
+        db = self.client['Accounts']
+        collection = db['accounts_details']
 
+        obj = collection.find_one({"acc_no":account_no})
+        uploaded_documents_list = list(obj["uploaded_documents"])
+        for single_document in uploaded_documents_list:
+            base64_data = single_document["file_data"]
+            base64_data_list.append(base64_data)
+
+        return base64_data_list,obj
+    
 # obj = MongoDB()
 # response  = obj.upload_documents(name='Sharma',dob=None,address=' Delhi, India')
 

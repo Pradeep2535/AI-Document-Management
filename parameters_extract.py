@@ -1,9 +1,10 @@
 from langchain.prompts import PromptTemplate
-from langchain.schema import StrOutputParser
+from langchain.schema import StrOutputParser, SystemMessage, HumanMessage
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 import google.generativeai as genai
-from langchain_google_genai import GoogleGenerativeAI
+from langchain_google_genai import GoogleGenerativeAI, ChatGoogleGenerativeAI
 from langchain.chains.llm import LLMChain
+from langchain.memory import ConversationBufferMemory
 
 from constants import GOOGLE_API_KEY
 
@@ -72,5 +73,84 @@ def identify_document(text):
     parsed_response = output_parser.parse(response)
 
     return parsed_response.strip()
+
+
+
+
+
+
+def load_document(text, obj):
+    global document_text, account_details
+    # obj.pop('_id', None)
+    # obj.pop('uploaded_documents', None)
+    document_text = text
+    account_details = str(obj)
+    print("Document successfully loaded.")
+
+
+def chatbot_answer(query):
+    
+    #memory.chat_memory.add_message({"role": "user", "content": query})
+    
+    # System prompt with document and account details
+    system_prompt = f"""
+    You are a helpful chatbot assistant with access to sensitive user documents and account details. 
+    Your task is to provide accurate answers based on the information provided below. 
+    Do not answer questions unrelated to the document or account details.
+
+    Document Information:
+    {document_text}
+
+    Account Details:
+    {account_details}
+
+    If the user asks about anything outside these contexts, respond with:
+    'I can only assist with document or account-related queries.'
+    """
+    inputs = {
+        "chat_history": memory.chat_memory,
+        "question": query
+    }
+    print(str(memory.chat_memory.messages)+"-------------------")
+    # Create prompt template for conversation
+    prompt = PromptTemplate(
+        input_variables=["chat_history", "question"],
+        template=f"""
+        {system_prompt}
+
+        Conversation History:
+        {{chat_history}}
+        
+        Answer the following question:
+        {{question}}
+        """
+    )
+    
+    # Create a chain to process the query
+    chain = LLMChain(llm=llm2, prompt=prompt, memory=memory)
+    
+    # Run the chain and return response
+    response = chain.invoke(inputs)
+    #memory.chat_memory.add_message({"role": "assistant", "content": response['text']})
+    # Basic parsing to ensure clean output
+    print(memory.chat_memory.messages)
+    if "I can only assist" in response:
+        return "I can only assist with document or account-related queries."
+    
+    return response['text']
+
+
+  
+def reset_memory():
+    global memory
+    memory.clear()
+    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+    
+
+document_text = ""
+account_details = ""
+llm2 = GoogleGenerativeAI(model='gemini-1.5-flash', google_api_key=GOOGLE_API_KEY)
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 

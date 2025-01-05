@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template
-from parameters_extract import analyze_keywords, identify_document
+from parameters_extract import analyze_keywords, identify_document,load_document, chatbot_answer,reset_memory
 from mongo_db_backend import MongoDB
 from bson.binary import Binary
 import os
@@ -14,6 +14,8 @@ from tempfile import NamedTemporaryFile
 from drive import upload_file_to_folder, create_nested_folders, create_or_get_folder
 import io
 import random
+import base64
+from langchain.memory import ConversationBufferMemory
 
 
 app = Flask(__name__)
@@ -21,8 +23,21 @@ app = Flask(__name__)
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 pytesseract.pytesseract.tesseract_cmd = r"C:\\Tesseract\\Tesseract-OCR\\tesseract.exe"
 
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Encoding
+def encode_base64(text):
+    encoded = base64.b64encode(text.encode('utf-8'))
+    return encoded.decode('utf-8')
+
+# Decoding
+def decode_base64(encoded_text):
+    decoded = base64.b64decode(encoded_text)
+    return decoded.decode('utf-8')
 
 
 def detect_file_type(uploaded_file):
@@ -182,13 +197,13 @@ def upload_file():
 
                     file_type = document_type
                     file_name = str(document_type)
-                    file_data = file_io
-                    bson_file_data = Binary(file_data)
+                    # file_data = file_io
+                    base64_file_data = encode_base64(extracted_text)
 
                     file_document = { 
                         'file_type' : file_type,
                         'file_name' : account_no+"_"+file_name,
-                        'file_data' : bson_file_data
+                        'file_data' : base64_file_data
                         
                     }
 
@@ -238,6 +253,57 @@ def upload_file_for_selected_account():
     return jsonify({
         "upload_status" : upload_status
     })
+
+@app.route("/chatbot_acc_no", methods = ['POST'])
+def chatbot_account_no_confirmation():
+
+    data = request.json
+    account_no = data.get("account_no")
+
+    mongo_client = MongoDB
+    base64_documents_list, obj = mongo_client.retrieve_documents(account_no=account_no)
+
+    document_text = ""
+
+    for single_document in base64_documents_list:
+        document_text += decode_base64(single_document)
+    
+    
+    
+    
+
+    if document_text == "":
+        return jsonify({
+            "response" : "Unable to find documents."
+        })
+    else:
+        d = dict(obj)
+        account_str = ""
+        for i in d.keys():
+            account_str += str(i+":")
+            account_str += str(d[i])
+        reset_memory()
+        load_document(document_text, account_str)
+        
+        return jsonify({
+            "response":"Ok, ask queries."
+        })
+
+@app.route("/chatbot_response",methods=["POST"])
+def chatbot_response():
+    data = request.json 
+    query = data.get("query")
+    
+    response = chatbot_answer(query=query)
+
+    return jsonify({
+        "response" : response
+    })
+
+
+
+
+
     
 
 
