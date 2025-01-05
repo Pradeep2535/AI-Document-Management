@@ -40,7 +40,7 @@ celery_app = celery_init_app(app)
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\\Tesseract\\Tesseract-OCR\\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"Tesseract-OCR/tesseract.exe"
 
 
 def allowed_file(filename):
@@ -79,7 +79,7 @@ def extract_text_with_ocr(uploaded_file):
        #print("------------------")
         #print(uploaded_file)
         # Convert PDF to images using the correct Poppler path
-        images = convert_from_bytes(file_bytes.getvalue(), poppler_path=r'C:\\Users\\malap\\Downloads\\Release-24.08.0-0\\poppler-24.08.0\\Library\\bin')
+        images = convert_from_bytes(file_bytes.getvalue(), poppler_path=r'poppler-24.08.0\\Library\\bin')
         
         # Perform OCR on each image and extract text
         for image in images:
