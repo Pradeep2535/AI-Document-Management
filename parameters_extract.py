@@ -111,7 +111,7 @@ def chatbot_answer(query):
         "chat_history": memory.chat_memory,
         "question": query
     }
-    print(str(memory.chat_memory.messages)+"-------------------")
+    #print(str(memory.chat_memory.messages)+"-------------------")
     # Create prompt template for conversation
     prompt = PromptTemplate(
         input_variables=["chat_history", "question"],

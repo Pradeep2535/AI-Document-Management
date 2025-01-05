@@ -16,18 +16,34 @@ import io
 import random
 import base64
 from langchain.memory import ConversationBufferMemory
+from worker import celery_init_app
+from flask_caching import Cache
 
+cache=Cache()
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder='templates', static_folder='static')
+app.config['CACHE_TYPE'] = "RedisCache"
+app.config['CACHE_REDIS_HOST'] = "localhost"
+app.config['CACHE_REDIS_PORT'] = 6379
+app.config.from_mapping(
+    CELERY=dict(
+        broker_url="redis://localhost:6379/1",
+        result_backend="redis://localhost:6379/2",
+        task_serializer="json",
+        result_serializer="json",
+        accept_content=["json"],
+    ),
+)
+app.config['CELERY_TIMEZONE'] = 'Asia/Kolkata'
+cache.init_app(app)
+celery_app = celery_init_app(app)
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 pytesseract.pytesseract.tesseract_cmd = r"C:\\Tesseract\\Tesseract-OCR\\tesseract.exe"
 
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 # Encoding
 def encode_base64(text):
@@ -59,17 +75,20 @@ def extract_text_with_ocr(uploaded_file):
     try:
         # Read the uploaded file into a BytesIO object
         file_bytes = BytesIO(uploaded_file)
-        print("------------------")
-        print(uploaded_file)
+       #print("------------------")
+        #print(uploaded_file)
         # Convert PDF to images using the correct Poppler path
         images = convert_from_bytes(file_bytes.getvalue(), poppler_path=r'C:\\Users\\malap\\Downloads\\Release-24.08.0-0\\poppler-24.08.0\\Library\\bin')
         
         # Perform OCR on each image and extract text
         for image in images:
             text += pytesseract.image_to_string(image, lang='eng+hin+tam')  # Adding Tamil language
+        #print(text)
     except Exception as e:
         print(f"Error performing OCR: {e}")
-    return text
+    #print(text)
+    finally:
+        return text
 
 
 # def extract_text_from_pdf(pdf_path):
@@ -138,8 +157,25 @@ def index():
     """
     Renders the main landing page of the application.
     """
-    return render_template("main.html") 
+    
+    return render_template("index.html") 
 
+
+@app.route('/customer')
+def about():
+    return render_template('/customer.html')
+
+@app.route('/transaction')
+def transaction():
+    return render_template('/transaction_history.html')
+
+@app.route('/upload')
+def upload():
+    return render_template('/upload.html')
+
+@app.route('/test')
+def test():
+    return render_template('/test.html')
 
 
 @app.route("/upload_file",methods = ["POST"])
@@ -150,7 +186,8 @@ def upload_file():
         
     
     file = request.files['file']
-    
+    #print("-"*100)
+    #print(file,file.filename)
     if file.filename == '':
         return jsonify({"upload_status" : 'not_uploaded' })
 
@@ -164,26 +201,35 @@ def upload_file():
         file_type = detect_file_type(file_bytes)
 
         extracted_text = ""
-
-        print(file_bytes,file_type)
+        #print("-"*10)
+        #print(file_bytes,file_type)
 
         if file_type == 'pdf':
             extracted_text = extract_text_with_ocr(file_bytes)
+            #print(extracted_text)
         elif file_type == 'image':
             extracted_text = extract_text_from_image(file_bytes)
         else:
             status = "unsupported"
 
         document_type = classify_document(extracted_text)
+        
+        print(document_type)
         name, dob, address = analyze_keywords(text=extracted_text)
-        if name is not None:
+        print(name,dob,address)
+        if name is None:
             status = 'upload_different_document'
+            print(status)
         else:
             name=name.lower()
             
             mongo_client = MongoDB()
+            print("-"*200)
             account_status, accounts = mongo_client.person_id(name=name,dob=dob,address=address)
-            
+            print("ppppp")
+            for i in accounts:
+                print(type(i))
+            #print(accounts,account_status)
             if account_status is None:
                 status = 'upload_different_document'
                 return jsonify({
@@ -202,7 +248,7 @@ def upload_file():
 
                     file_document = { 
                         'file_type' : file_type,
-                        'file_name' : account_no+"_"+file_name,
+                        'file_name' : str(account_no) +"_"+file_name,
                         'file_data' : base64_file_data
                         
                     }
@@ -212,17 +258,69 @@ def upload_file():
                     if result:
                         upload_status = 'success'
                         
+                        
                     else:
                         upload_status = 'network_error'
 
+                    folder_name1 = "Documents"
+            
+                    internal_folder_name1 = document_type
+
+                    folder_id1 = create_or_get_folder(folder_name1)
+                    nested_folder_id1 = create_nested_folders(internal_folder_name1,folder_id1)
+                    file.seek(0)
+                    with NamedTemporaryFile(delete=False) as temp_file1:
+                        temp_file1.write(file.read())
+                        temp_file1.flush()
+                        temp_file1_path = temp_file1.name
+
+                    res1 = upload_file_to_folder(temp_file1, str(account_no) +"_"+name, nested_folder_id1)
+
+
+                    #Person-wise Heirarchy in Drive
+                    
+                    file.seek(0)
+
+                    folder_name2 = "Account_Holders"
+
+                    internal_folder_name2 = name
+
+                    folder_id2 = create_or_get_folder(folder_name2)
+                    nested_folder_id2 = create_nested_folders(str(account_no)+'_'+internal_folder_name2,folder_id2)
+
+                    with NamedTemporaryFile(delete=False) as temp_file2:
+                        temp_file2.write(file.read())
+                        temp_file2.flush()
+                        temp_file2_path = temp_file2.name
+
+                    res2 = upload_file_to_folder(temp_file2, document_type, nested_folder_id2)
+                    
+                    print(res1,res2)
                     return jsonify({
                         "upload_status" : upload_status
                     })
 
 
                 elif account_status == "list_of_accounts":
+                    file_type = document_type
+                    base64_file_data = encode_base64(extracted_text)
+                    file_document = { 
+                        'file_type' : file_type,
+                        'file_data' : base64_file_data
+                    }
                     
-                    accounts = jsonify(accounts)
+                    
+                    new_accounts = []
+                    for i in accounts:
+                        new_dict = dict()
+                        name = i['name']
+                        acc_no = i['acc_no']
+                        new_dict['name'] = name
+                        new_dict['acc_no'] = acc_no
+                        new_accounts.append(new_dict)
+
+                    accounts = dict(new_accounts)
+                    
                     upload_status = "display_accounts"
 
                     return jsonify({
@@ -242,7 +340,7 @@ def upload_file_for_selected_account():
     file_document = data.get("file_document")
     document_type = data.get("document_type")
     account = data.get("account")
-
+    file_document['file_name'] = account["acc_no"]+"_"+ document_type
     result = mongo_client.insert_document(account,file_document,document_type)
 
     if result:
@@ -301,6 +399,10 @@ def chatbot_response():
     })
 
 
+@app.get('/shared/<task_id>')
+def shared_url(task_id):
+    return render_template('shared.html', task_id=task_id)
+
 
 
 
@@ -315,3 +417,5 @@ def chatbot_response():
 
 
         
+if __name__ == '__main__':
+    app.run(debug=True)

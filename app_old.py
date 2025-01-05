@@ -50,8 +50,8 @@ def extract_text_with_ocr(uploaded_file):
     try:
         # Read the uploaded file into a BytesIO object
         file_bytes = BytesIO(uploaded_file)
-        print("------------------")
-        print(uploaded_file)
+        #print("------------------")
+        #print(uploaded_file)
         # Convert PDF to images using the correct Poppler path
         images = convert_from_bytes(file_bytes.getvalue(), poppler_path=r'C:\\Users\\malap\\Downloads\\Release-24.08.0-0\\poppler-24.08.0\\Library\\bin')
         
@@ -140,7 +140,7 @@ if file:
     
 
     extracted_text = ""
-    print(file_read,file_type)
+    #print(file_read,file_type)
     if file_type == 'pdf':
         extracted_text = extract_text_with_ocr(file_read)
     elif file_type == 'image':
