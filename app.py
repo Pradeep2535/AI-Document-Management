@@ -39,6 +39,7 @@ cache.init_app(app)
 celery_app = celery_init_app(app)
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+
 pytesseract.pytesseract.tesseract_cmd = r"C:\\Tesseract\\Tesseract-OCR\\tesseract.exe"
 
 
