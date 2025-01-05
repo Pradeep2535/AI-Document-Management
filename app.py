@@ -59,7 +59,7 @@ def decode_base64(encoded_text):
 
 def detect_file_type(uploaded_file):
     
-    mime = magic.Magic(mime=True)
+    mime = magic.Magic(mime=True, magic_file=r"C:\\Windows\\System32\\magic.mgc")
     
     file_type = mime.from_buffer(uploaded_file)
 

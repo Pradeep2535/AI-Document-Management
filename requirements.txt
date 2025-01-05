@@ -3,5 +3,14 @@ langchain-community
 google-generativeai
 langchain-google-genai
 pymongo
-
-
+flask
+scikit-learn
+numpy
+pdf2image
+opencv-python
+pytesseract
+python-magic
+redis
+celery
+flask-caching
+python-libmagic
