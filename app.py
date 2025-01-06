@@ -184,6 +184,14 @@ def upload():
 def test():
     return render_template('/test.html')
 
+@app.route('/shared_upload')
+def shared_upload():
+    return render_template('/shared_upload.html')
+
+@app.route('/chat')
+def chat():
+    return render_template('/chatbot.html')
+
 
 @app.route("/upload_file",methods = ["POST"])
 def upload_file():
@@ -414,7 +422,7 @@ def chatbot_account_no_confirmation():
 
     data = request.json
     account_no = data.get("account_no")
-
+    print("hiiiiiiiiiiiiii",account_no)
     mongo_client = MongoDB()
     base64_documents_list, obj = mongo_client.retrieve_documents(account_no=account_no)
 
@@ -435,22 +443,33 @@ def chatbot_account_no_confirmation():
         d = dict(obj)
         account_str = ""
         for i in d.keys():
-            account_str += str(i+":")
-            account_str += str(d[i])
+            if i=="uploaded_documents":
+                values = d[i]
+                final_doc_str = ""
+                for j in list(values):
+                    doc_str = ""
+                    for k in dict(j).keys():
+                        doc_str += (str(k) + ":")
+                        doc_str += (str(j[k]) + " ")
+                    final_doc_str += (doc_str + "\n")
+                account_str += final_doc_str
+            else:
+                account_str += str(i+":")
+                account_str += (str(d[i]) + " ")
         reset_memory()
         load_document(document_text, account_str)
         
         return jsonify({
-            "response":"Ok, ask queries."
+            "response":"Details loaded, ask queries."
         })
 
 @app.route("/chatbot_response",methods=["POST"])
 def chatbot_response():
     data = request.json 
     query = data.get("query")
-    
+    print(query,"query")
     response = chatbot_answer(query=query)
-
+    print(response)
     return jsonify({
         "response" : response
     })
@@ -487,6 +506,8 @@ def transaction_history():
     return jsonify({
         "rows_list":final_return_list
     })
+
+
 
 
 

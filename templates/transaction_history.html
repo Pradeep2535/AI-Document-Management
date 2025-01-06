@@ -38,7 +38,7 @@
               <span class="material-symbols-sharp">insights </span>
               <h3>Analytics</h3>
            </a>
-           <a href="#">
+           <a href="/chat">
               <span class="material-symbols-sharp">mail_outline </span>
               <h3>Messages</h3>
            
@@ -87,7 +87,7 @@
       <!-- --------------
         start main part
       --------------- -->
-      <div class="container-2" style="margin-left:230px;">
+      <div class="container-2" style="margin-left:450px; margin-top:100px">
         <h1>Transaction History</h1>
 
         <form id="filterForm">
@@ -135,20 +135,25 @@
           <div class="filter-group">
               <button type="submit" id="submitFilter">Filter</button>
           </div>
-        <table id = "table-transaction-id" class="transaction-table">
+          <table id="table-transaction-id" class="transaction-table">
             <thead>
-                <tr>
-                    <th>Account Number</th>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Uploaded Time</th>
-                    <th>Uploaded Documents</th>
-                </tr>
+              <tr>
+                <th>Account Number</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Uploaded Time</th>
+                <th>Uploaded Documents</th>
+              </tr>
             </thead>
             <tbody>
-                <!-- Rows will be dynamically inserted here -->
+              <!-- Rows will be dynamically inserted here -->
             </tbody>
-        </table>
+          </table>
+          <div id="spinner" class="spinner" style="display:none;"></div>
+          <div id="dialog-box" class="dialog-box-2">
+            No records found.
+          </div>
+        
     </div>
     
      
@@ -169,7 +174,7 @@
     tableBody.style.display = 'none';
 document.getElementById('filterForm').onsubmit = async function (e) {
     e.preventDefault();
-
+    document.getElementById('spinner').style.display = 'block';
     const selectedDate = document.getElementById('date').value;
     const selectedHours = document.getElementById('hours').value;
     //const selectedTimeRange = document.getElementById('timeRange').value;
@@ -199,14 +204,22 @@ document.getElementById('filterForm').onsubmit = async function (e) {
   response_result = await transaction_response.json();
   result = response_result.rows_list;
   console.log(result)
-  if(result.length == 0){
-  console.log("no uploads found - keep dialog box");
- 
-  const tableBody = document.getElementById('table-transaction-id');
-  tableBody.style.display = 'none';
-  }
+  if (result.length === 0) {
+  console.log("No uploads found - keep dialog box");
+  // Hide the table
+  const table = document.getElementById('table-transaction-id');
+  table.style.display = 'none';
+
+  // Show the dialog box
+  const dialogBox = document.getElementById('dialog-box');
+  dialogBox.style.display = 'block';
+  document.getElementById('spinner').style.display = 'none';
+} 
   else{
   populateTransactionTable(result);
+  const dialogBox = document.getElementById('dialog-box');
+  dialogBox.style.display = 'none';
+  document.getElementById('spinner').style.display = 'none';
   const tableBody = document.getElementById('table-transaction-id');
   tableBody.style.display = 'block';
   }
