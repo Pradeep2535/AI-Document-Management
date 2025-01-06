@@ -18,7 +18,13 @@ import base64
 from langchain.memory import ConversationBufferMemory
 from worker import celery_init_app
 from flask_caching import Cache
+from datetime import datetime
 
+now = datetime.now()
+
+# Extract date and format time to HH:MM as string
+current_date = str(now.date())  # Convert date to string
+current_time = now.strftime("%H:%M")  # Time as string in HH:MM
 cache=Cache()
 
 app = Flask(__name__,template_folder='templates', static_folder='static')
@@ -248,6 +254,8 @@ def upload_file():
                     base64_file_data = encode_base64(extracted_text)
 
                     file_document = { 
+                        'date':current_date,
+                        'time':current_time,
                         'file_type' : file_type,
                         'file_name' : str(account_no) +"_"+file_name,
                         'file_data' : base64_file_data
@@ -306,6 +314,8 @@ def upload_file():
                     file_type = document_type
                     base64_file_data = encode_base64(extracted_text)
                     file_document = { 
+                        'date':current_date,
+                        'time':current_time,
                         'file_type' : file_type,
                         'file_data' : base64_file_data
                     }
@@ -318,17 +328,21 @@ def upload_file():
                         acc_no = i['acc_no']
                         new_dict['name'] = name
                         new_dict['acc_no'] = acc_no
+                        new_dict['_id'] = str(i['_id'])
                         new_accounts.append(new_dict)
 
-                    accounts = dict(new_accounts)
-                    
+                    accounts = list(new_accounts)
+                    file.seek(0)
                     upload_status = "display_accounts"
-
+                    file_content = base64.b64encode(file.read()).decode('utf-8')
+                    
                     return jsonify({
                         "upload_status" : upload_status,
                         "file_document" : file_document,
                         "document_type" : document_type,
-                        "accounts" : accounts
+                        "accounts" : accounts,
+                        "file_data":file_content
+                        
                     })
                 
 @app.route("/upload_file_selected_account",methods = ['POST'])
@@ -341,17 +355,59 @@ def upload_file_for_selected_account():
     file_document = data.get("file_document")
     document_type = data.get("document_type")
     account = data.get("account")
-    file_document['file_name'] = account["acc_no"]+"_"+ document_type
+    file_content = data.get("file_data")
+    file_data = base64.b64decode(file_content)
+    file_document['file_name'] = str(account["acc_no"])+"_"+ document_type
+    file_document['date'] = current_date
+    file_document['time'] = current_time
+
     result = mongo_client.insert_document(account,file_document,document_type)
 
     if result:
         upload_status = 'success'                   
     else:
         upload_status = 'network_error'
-    
+    folder_name1 = "Documents"
+            
+    internal_folder_name1 = document_type
+
+    folder_id1 = create_or_get_folder(folder_name1)
+    nested_folder_id1 = create_nested_folders(internal_folder_name1,folder_id1)
+    # file.seek(0)
+    with NamedTemporaryFile(delete=False) as temp_file1:
+        temp_file1.write(file_data)
+        temp_file1.flush()
+        temp_file1_path = temp_file1.name
+
+    res1 = upload_file_to_folder(temp_file1, str(account["acc_no"]) +"_"+account["name"], nested_folder_id1)
+
+
+                    #Person-wise Heirarchy in Drive
+                    
+    # file.seek(0)
+
+    folder_name2 = "Account_Holders"
+
+    internal_folder_name2 = account["name"]
+    print("pm",type(internal_folder_name2))
+    folder_id2 = create_or_get_folder(folder_name2)
+    nested_folder_id2 = create_nested_folders(str(account["acc_no"]) +'_'+ str(internal_folder_name2),folder_id2)
+
+    with NamedTemporaryFile(delete=False) as temp_file2:
+        temp_file2.write(file_data)
+        temp_file2.flush()
+        temp_file2_path = temp_file2.name
+
+    res2 = upload_file_to_folder(temp_file2, document_type, nested_folder_id2)
+                    
+    print(res1,res2)
     return jsonify({
-        "upload_status" : upload_status
+         "upload_status" : upload_status,
+         "acc_no":str(account["acc_no"])
     })
+    
+
+
 
 @app.route("/chatbot_acc_no", methods = ['POST'])
 def chatbot_account_no_confirmation():
@@ -359,7 +415,7 @@ def chatbot_account_no_confirmation():
     data = request.json
     account_no = data.get("account_no")
 
-    mongo_client = MongoDB
+    mongo_client = MongoDB()
     base64_documents_list, obj = mongo_client.retrieve_documents(account_no=account_no)
 
     document_text = ""
@@ -398,6 +454,40 @@ def chatbot_response():
     return jsonify({
         "response" : response
     })
+
+@app.route("/filter_hours",methods = ['POST'])
+def filter_hours():
+    mongo_client = MongoDB()
+    data = request.json
+    hours = data.get("hours")
+    total_doc_len = mongo_client.get_documents_count_hours_length(hours)
+    return jsonify({
+        "doc_length":total_doc_len
+    })
+
+@app.route("/transaction_history",methods = ['POST'])
+def transaction_history():
+    mongo_client = MongoDB()
+    data = request.json
+    selected_date = data.get("selected_date")
+    start_hour = data.get("start_hour")
+    end_hour = data.get("end_hour")
+    return_list = mongo_client.get_documents_transaction_history(selected_date=selected_date,start_hour=start_hour,end_hour=end_hour)
+    final_return_list = []
+    for i in return_list:
+        new_dict = dict()
+        new_dict["account_number"] = i[0]
+        new_dict["name"] = i[1]
+        new_dict["uploaded_date"] = i[2]
+        new_dict["uploaded_time"] = i[3]
+        new_dict["uploaded_documents"] = i[4]
+        final_return_list.append(new_dict)
+
+    
+    return jsonify({
+        "rows_list":final_return_list
+    })
+
 
 
 @app.get('/shared/<task_id>')
