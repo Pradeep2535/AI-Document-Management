@@ -265,7 +265,16 @@
   <div class="recent_updates">
      <h2>Recent Update</h2>
    <div class="updates" >
-    
+    <div class="card-3">
+      <!-- Card Header -->
+      <div class="header">
+        <h4>Bar Chart</h4>
+      </div>
+      <!-- Chart -->
+      <div class="chart-container">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
   </div>
   </div>
 
@@ -330,5 +339,31 @@
 
 
    <script src="/static/js/script.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [{
+          label: 'Revenue',
+          data: [12, 19, 3, 5, 2, 3, 7],
+          backgroundColor: 'rgba(59, 130, 246, 0.8)',
+          borderColor: 'rgba(37, 99, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+  </script>
 </body>
 </html>

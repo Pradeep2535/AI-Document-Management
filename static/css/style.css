@@ -248,7 +248,7 @@ main .insights>div{
 .expenses{
   display:flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .card-2 {
@@ -308,19 +308,11 @@ main .insights > div:hover{
   box-shadow: none;
 }
 main .insights>div  span{
-   background: coral;
     padding: 0.5rem;
      border-radius: 50%;
      color: var(--clr-white);
      font-size: 2rem; 
   }
-
-main .insights > div.expenses span{
-   background: var(--clr-danger);
-}
-main .insights > div.income span{
-  background: var(--clr-success);
-}
 
 main .insights > div .middle{
    display: flex;
@@ -994,4 +986,89 @@ MEDIA QUERY PHONE
   width: 76%;
   height: 100%;
   border-radius: 0.25rem;
+}
+
+.card-3 {
+  background-color: #f9fafb; /* Light background */
+  border-radius: 20px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 480px;
+  margin: 20px auto;
+}
+
+.card-3:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* Card Header */
+.card-3 .header {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  padding: 1.5rem;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+
+.card-3 .header h4 {
+  font-size: 1.5rem; /* Larger header text */
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.card-3 .header button {
+  background-color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem; /* Equivalent to text-sm */
+  font-weight: 600;
+  color: #4f46e5;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-3 .header button:hover {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  transform: scale(1.05);
+}
+
+/* Chart Area */
+.card-3 .chart-container {
+  padding: 2rem;
+  height: 22rem; /* Taller chart area */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 0 0 20px 20px;
+  box-shadow: inset 0px -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+canvas#barChart {
+  width: 100%;
+  height: 100%;
+}
+
+/* Animations for the Chart */
+.card-3 .chart-container {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

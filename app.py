@@ -508,6 +508,33 @@ def transaction_history():
     })
 
 
+@app.route('/fetch_and_display',methods = ['GET'])
+def fetch_accounts():
+    mongo_client = MongoDB()
+   
+    db = mongo_client.client['Accounts']
+    collection = db['accounts_details']
+
+    accounts = collection.find({})
+    l=[]
+    for i in accounts:
+        d=dict()
+        doc = dict(i)
+        
+        name = doc['name']
+        dob = doc['dob']
+        phone = doc['phone']
+        email = doc['email']
+        d['name'] = name
+        d['dob'] = dob 
+        d['phone'] = phone
+        d['email'] = email
+        l.append(d)
+    return jsonify({
+        "accounts":l
+    })
+    
+
 
 
 
