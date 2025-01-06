@@ -524,9 +524,9 @@ def shared(token):
     except (SignatureExpired, BadTimeSignature):
         return jsonify({"error": "Invalid or expired token"}), 400
     
-@app.route('/send_otp', methods=['POST'])
-def send_otp():
-    data = request.json
+# @app.route('/send_otp', methods=['POST'])
+# def send_otp():
+#     data = request.json
     
 
 if __name__ == '__main__':

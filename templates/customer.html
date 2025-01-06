@@ -114,6 +114,15 @@
         start right main 
       ---------------------->
     
+   <div id="linkModal" class="modal">
+      <div class="modal-content">
+         <span class="close-modal">&times;</span>
+         <h2>Send Link</h2>
+         <p>Are you sure you want to send the link?</p>
+         <button id="confirmSendLink" class="confirm-btn">Yes</button>
+         <button id="cancelSendLink" class="cancel-btn">Cancel</button>
+      </div>
+   </div>
 
    <script src="/static/js/script.js"></script>
    <script>
@@ -121,6 +130,10 @@
     
     const length = 10;  // Number of sales cards to generate
      const salesContainer = document.getElementById('salesContainer');
+     const linkModal = document.getElementById('linkModal');
+     const closeModal = document.querySelector('.close-modal');
+     const confirmSendLink = document.getElementById('confirmSendLink');
+     const cancelSendLink = document.getElementById('cancelSendLink');
 
      for (let i = 0; i < length; i++) {
        const salesCard = document.createElement('div');
@@ -136,13 +149,51 @@
                       <p><b>Account type:</b>Savings</p>
                       <div class="dialog-actions">
                         
-                        <button class="cancel-btn"  style="margin:10px;">Send link</button>
+                        <button class="cancel-btn send-link-btn"  style="margin:10px;">Send link</button>
                     </div>
                    </div>
                  </div>
             <br>
        `;
        salesContainer.appendChild(salesCard);
+      }
+
+      document.querySelectorAll('.send-link-btn').forEach(button => {
+         button.addEventListener('click', () => {
+            linkModal.style.display = 'block';
+         });
+      });
+
+      closeModal.addEventListener('click', () => {
+         linkModal.style.display = 'none';
+      });
+
+      cancelSendLink.addEventListener('click', () => {
+         linkModal.style.display = 'none';
+      });
+
+      confirmSendLink.addEventListener('click', () => {
+         fetch('/send-link', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: 'Send link confirmed' })
+         })
+         .then(response => response.json())
+         .then(data => {
+            console.log('Success:', data);
+            linkModal.style.display = 'none';
+         })
+         .catch((error) => {
+            console.error('Error:', error);
+         });
+      });
+
+      window.onclick = function(event) {
+         if (event.target == linkModal) {
+            linkModal.style.display = 'none';
+         }
       }
   </script>
 </body>
