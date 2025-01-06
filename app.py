@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for
 from parameters_extract import analyze_keywords, identify_document,load_document, chatbot_answer,reset_memory
 from mongo_db_backend import MongoDB
 from bson.binary import Binary
@@ -16,33 +16,29 @@ import io
 import random
 import base64
 from langchain.memory import ConversationBufferMemory
-from worker import celery_init_app
-from flask_caching import Cache
 from datetime import datetime
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 
 now = datetime.now()
 
 # Extract date and format time to HH:MM as string
 current_date = str(now.date())  # Convert date to string
 current_time = now.strftime("%H:%M")  # Time as string in HH:MM
-cache=Cache()
 
 app = Flask(__name__,template_folder='templates', static_folder='static')
-app.config['CACHE_TYPE'] = "RedisCache"
-app.config['CACHE_REDIS_HOST'] = "localhost"
-app.config['CACHE_REDIS_PORT'] = 6379
-app.config.from_mapping(
-    CELERY=dict(
-        broker_url="redis://localhost:6379/1",
-        result_backend="redis://localhost:6379/2",
-        task_serializer="json",
-        result_serializer="json",
-        accept_content=["json"],
-    ),
-)
-app.config['CELERY_TIMEZONE'] = 'Asia/Kolkata'
-cache.init_app(app)
-celery_app = celery_init_app(app)
+app.config['SECRET_KEY'] = 'Thisisasecret!'  # Ensure the secret key is set
+
+app.config['MAIL_SERVER'] = 'smtp.example.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = 'your-email@example.com'
+app.config['MAIL_PASSWORD'] = 'your-email-password'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
@@ -488,25 +484,31 @@ def transaction_history():
         "rows_list":final_return_list
     })
 
+@app.route('/generate_upload_link', methods=['POST'])
+def generate_upload_link():
+    data = request.json
+    user_data = data.get('user_data')
+    if not user_data:
+        return jsonify({"error": "No user data provided"}), 400
+    token = s.dumps(user_data, salt=app.config['SECRET_KEY'])
+    upload_link = url_for('shared', token=token, _external=True)
+    return jsonify({"upload_link": upload_link})
 
-
-@app.get('/shared/<task_id>')
-def shared_url(task_id):
-    return render_template('shared.html', task_id=task_id)
-
-
-
-
+@app.route('/shared/<token>')
+def shared(token):
+    try:
+        user_data = s.loads(token, salt=app.config['SECRET_KEY']) 
+        if not user_data:
+            return jsonify({"error": "Invalid or expired token"}), 400
+        print(user_data)
+        return render_template('shared_upload.html', token=token, user_data=user_data)
+    except (SignatureExpired, BadTimeSignature):
+        return jsonify({"error": "Invalid or expired token"}), 400
+    
+@app.route('/send_otp', methods=['POST'])
+def send_otp():
+    data = request.json
     
 
-
-
-
-                
-    
-    
-
-
-        
 if __name__ == '__main__':
     app.run(debug=True)
