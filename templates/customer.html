@@ -99,7 +99,7 @@
 
       <main>
         <div class="dashboard-item"> 
-            <h1>New Customer</h1>
+            <h1>Customers</h1>
 
         <div class="insights" id="salesContainer">
             <!-- Sales cards will be dynamically added here -->
@@ -117,10 +117,27 @@
    <div id="linkModal" class="modal">
       <div class="modal-content">
          <span class="close-modal">&times;</span>
-         <h2>Send Link</h2>
-         <p>Are you sure you want to send the link?</p>
-         <button id="confirmSendLink" class="confirm-btn">Yes</button>
-         <button id="cancelSendLink" class="cancel-btn">Cancel</button>
+         <h2>Shared Link</h2>
+          <div class="form-group">
+            <label for="profileLink"></label>
+            <input type="text" id="profileLink" class="form-control url-input" readonly />
+            <!-- <button class="open-url-btn">Open URL</button> -->
+            <button id="copyLinkButton" class="copy-btn">Copy URL</button>
+            <button id="sendSMS" class="sms-btn">Send SMS</button>
+            <button id="sendmail" class="mail-btn">Send E-Mail</button>
+          </div>
+          <script>
+            document.getElementById('copyLinkButton').addEventListener('click', () => {
+               const profileLink = document.getElementById('profileLink');
+               profileLink.select();
+               document.execCommand('copy');
+               alert('URL copied to clipboard');
+            });
+            document.querySelector('.open-url-btn').addEventListener('click', () => {
+               const profileLink = document.getElementById('profileLink');
+               window.open(profileLink.value, '_blank');
+            });
+          </script>
       </div>
    </div>
 
@@ -143,24 +160,26 @@
           
           // Assign unique data attributes for each button
           salesCard.innerHTML = `
-            <div class="update" style="display: flex; margin:5px;">
-              <div class="profile-photo" style="margin:30px;">
-                <img src="/static/assets/profile-3.jpg" alt=""/>
+            <div class="update" style="display: flex; margin:5px; justify-content: space-between;">
+               <div style="display: flex; align-items: center;">
+              <div class="profile-photo" style="margin:10px; margin-right: 20px;  align-items: center; display: flex;">
+                <img src="/static/assets/profile-3.jpg" style="width:60px; height:auto" alt=""/>
               </div>
               <div class="message">
                 <h4><b>${account.name}</b></h4>
                 <p><b>DOB:</b> ${account.dob}</p>
                 <p><b>Phone:</b> ${account.phone}</p>
                 <p><b>Email:</b> ${account.email}</p>
+               </div>
+               </div>
                 <div class="dialog-actions">
-                  <button class="send-link-btn cancel-btn" style="margin:10px;"
+                  <button class="send-link-btn share-btn";"
                     data-name="${account.name}" 
                     data-dob="${account.dob}" 
                     data-phone="${account.phone}" 
                     data-email="${account.email}">
                     Send link
                   </button>
-                </div>
               </div>
             </div>
           `;
@@ -183,8 +202,29 @@
               phone,
               email
             };
+
+            user_data = {
+               user_data: selectedAccount
+            }
   
             console.log('Selected Account:', selectedAccount);
+            console.log(JSON.stringify(user_data   ));
+            fetch('/generate_upload_link', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(user_data)
+            })
+            .then(response => response.json())
+            .then(data => {
+               const profileLink = document.getElementById('profileLink');
+               profileLink.value = data.upload_link;
+            })
+            .catch(error => {
+               console.error('Error generating upload link:', error);
+            });
+            openModal();
           }
         });
   
@@ -192,6 +232,54 @@
         console.error('Error fetching data:', error);
       }
     });
+
+   // Function to open the modal
+   function openModal() {
+     const modal = document.getElementById('linkModal');
+     modal.style.display = 'block';
+   }
+
+   // Function to close the modal
+   function closeModal() {
+     const modal = document.getElementById('linkModal');
+     modal.style.display = 'none';
+   }
+
+   // Attach event listener to close modal button
+   document.querySelector('.close-modal').addEventListener('click', closeModal);
+
+   // Attach event listener to cancel button inside modal
+   document.getElementById('cancelSendLink').addEventListener('click', closeModal);
+
+   // Close modal when clicking outside of the modal content
+   window.addEventListener('click', (e) => {
+     const modal = document.getElementById('linkModal');
+     if (e.target === modal) {
+      closeModal();
+     }
+   });
+
+   // send sms via api
+   function sendSMS() {
+      const profileLink = document.getElementById('profileLink');
+      const url = profileLink.value;
+      const phone = '2348130000000';  // Replace with recipient's phone number
+      const message = `Hello, please upload your documents here: ${url}`;
+      const api_key = 'YOUR_API_KEY';  // Replace with your API key
+      const api_url = `https://api.smsmobile24.com/send?api_key=${api_key}&to=${phone}&msg=${message}&sender_id=SMSMobile24`;
+      
+      fetch(api_url)
+      .then(response => response.json())
+      .then(data => {
+        console.log('SMS sent:', data);
+        alert('SMS sent successfully');
+      })
+      .catch(error => {
+        console.error('Error sending SMS:', error);
+        alert('Failed to send SMS');
+      });
+   }
+   
   </script>
   
     
