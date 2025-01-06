@@ -769,3 +769,50 @@ MEDIA QUERY PHONE
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 300px;
 }
+
+
+.filter-container {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.filter-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  margin-bottom: 15px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.filter-group input,
+.filter-group select,
+.filter-group button {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filter-group button {
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.filter-group button:hover {
+  background-color: #45a049;
+}

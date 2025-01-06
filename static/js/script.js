@@ -24,3 +24,44 @@ themeToggler.addEventListener('click',()=>{
 // --------------
 
 // Get elements
+
+// Assuming 'result' is an array of transaction objects
+const result = [
+    {
+        account_number: "123456789",
+        name: "John Doe",
+        uploaded_date: "2025-01-05",
+        uploaded_time: "10:30 AM",
+        uploaded_documents: "Document1.pdf",
+    },
+    {
+        account_number: "987654321",
+        name: "Jane Smith",
+        uploaded_date: "2025-01-06",
+        uploaded_time: "2:45 PM",
+        uploaded_documents: "Document2.jpg",
+    }
+];
+
+// Function to populate the table dynamically
+function populateTransactionTable(data) {
+    const tableBody = document.querySelector('.transaction-table tbody');
+    tableBody.innerHTML = ""; // Clear existing rows, if any
+
+    data.forEach((transaction) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${transaction.account_number}</td>
+            <td>${transaction.uploaded_date}</td>
+            <td>${transaction.name}</td>
+            <td>${transaction.uploaded_time}</td>
+            <td>${transaction.uploaded_documents}</td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+// Call the function with the result array
+populateTransactionTable(result);

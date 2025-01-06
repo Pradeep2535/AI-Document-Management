@@ -77,6 +77,57 @@
         background: linear-gradient(to right, #2575fc, #6a11cb);
         transform: scale(1.05);
     }
+
+    .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -179,12 +230,18 @@
                   </label>
                   <button type="submit" class="upload-btn">Upload</button>
               </form>
-              <div id="response"></div>
-              </div>
+              <div id="spinner" class="spinner" style="display:none;"></div>
+              <div id="successModal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeModal" class="close">&times;</span>
+                    <h1>Successfully</h1>
+                    <p>File uploaded successfully!</p>
+                </div>
+            </div>
         </div>
        <!-- end insights -->
         </div>
-        <div class="container-2">
+        <div class="container-2" style="margin-left:0px; width:170%; margin-right:10px;">
           <h1>Multiple accounts found</h1>
           <table id="customerTable">
               <thead>
@@ -214,9 +271,12 @@ retryButton.addEventListener("click", function () {
 });
     document.getElementById('uploadForm').onsubmit = async function (e) {
       e.preventDefault();
+    document.getElementById('spinner').style.display = 'block';
       
       let formData = new FormData();
       let fileInput = document.getElementById('upload');
+
+
       formData.append("file", fileInput.files[0]);
 
       const response = await fetch('/upload_file', {
@@ -225,19 +285,51 @@ retryButton.addEventListener("click", function () {
       });
 
       var result = await response.json();
-      console.log("--------------------------------------------------------------");
       console.log(result);
+      console.log('djjjjjjjh');
       const responseDiv = document.getElementById('response');
       //console.log(result);
       if (result.upload_status === 'success') {
-          responseDiv.innerHTML = '<p>File uploaded successfully!</p>';
-      } else if (result.upload_status === 'display_accounts') {
+        console.log('1112222222222222');
+          //responseDiv.innerHTML = '<p>File uploaded successfully!</p>';
+         document.getElementById('spinner').style.display = 'none';
+          const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
 
-          
+            // Close modal when the close button is clicked
+            document.getElementById('closeModal').onclick = function () {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside the modal content
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+      } else if (result.upload_status === 'display_accounts') {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'none';
+        const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
+
+            // Close modal when the close button is clicked
+            document.getElementById('closeModal').onclick = function () {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside the modal content
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
           //responseDiv.innerHTML = '<p>Multiple accounts found. Please choose one:</p>';
 
           populateTable(result);
       } else {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'none';
           responseDiv.innerHTML = `<p>Upload failed: ${result.upload_status}</p>`;
       }
   };
@@ -259,7 +351,32 @@ retryButton.addEventListener("click", function () {
       const result = await response.json();
       console.log("--------------------------------------------------------------");
       console.log(result);
-      document.getElementById('response').innerHTML = `<p>${result.message}</p>`;
+      //document.getElementById('response').innerHTML = `<p>${result.message}</p>`;
+      if (result.upload_status === 'success') {
+        // Show the modal dialog
+        console.log('1333333333333333333333');
+        console.log("ooooooooooooooo");
+        console.log(result);
+        console.log(result.acc_no);
+        const modal = document.getElementById('successModal');
+        modal.style.display = 'flex';
+
+        // Update modal content if needed
+        const modalContent = modal.querySelector('p');
+        modalContent.innerHTML = `File uploaded successfully! Account Number: ${result.acc_no}`;
+
+        // Close modal when the close button is clicked
+        document.getElementById('closeModal').onclick = function () {
+            modal.style.display = 'none';
+        };
+
+        // Close modal when clicking outside the modal content
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
   }
   // -----------------------------------------------------------------------------------------
 

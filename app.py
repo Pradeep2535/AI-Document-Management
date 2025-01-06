@@ -18,7 +18,13 @@ import base64
 from langchain.memory import ConversationBufferMemory
 from worker import celery_init_app
 from flask_caching import Cache
+from datetime import datetime
 
+now = datetime.now()
+
+# Extract date and format time to HH:MM as string
+current_date = str(now.date())  # Convert date to string
+current_time = now.strftime("%H:%M")  # Time as string in HH:MM
 cache=Cache()
 
 app = Flask(__name__,template_folder='templates', static_folder='static')
@@ -248,6 +254,8 @@ def upload_file():
                     base64_file_data = encode_base64(extracted_text)
 
                     file_document = { 
+                        'date':current_date,
+                        'time':current_time,
                         'file_type' : file_type,
                         'file_name' : str(account_no) +"_"+file_name,
                         'file_data' : base64_file_data
@@ -306,6 +314,8 @@ def upload_file():
                     file_type = document_type
                     base64_file_data = encode_base64(extracted_text)
                     file_document = { 
+                        'date':current_date,
+                        'time':current_time,
                         'file_type' : file_type,
                         'file_data' : base64_file_data
                     }
@@ -348,6 +358,9 @@ def upload_file_for_selected_account():
     file_content = data.get("file_data")
     file_data = base64.b64decode(file_content)
     file_document['file_name'] = str(account["acc_no"])+"_"+ document_type
+    file_document['date'] = current_date
+    file_document['time'] = current_time
+
     result = mongo_client.insert_document(account,file_document,document_type)
 
     if result:
@@ -389,7 +402,8 @@ def upload_file_for_selected_account():
                     
     print(res1,res2)
     return jsonify({
-         "upload_status" : upload_status
+         "upload_status" : upload_status,
+         "acc_no":str(account["acc_no"])
     })
     
 
@@ -401,7 +415,7 @@ def chatbot_account_no_confirmation():
     data = request.json
     account_no = data.get("account_no")
 
-    mongo_client = MongoDB
+    mongo_client = MongoDB()
     base64_documents_list, obj = mongo_client.retrieve_documents(account_no=account_no)
 
     document_text = ""
@@ -440,6 +454,40 @@ def chatbot_response():
     return jsonify({
         "response" : response
     })
+
+@app.route("/filter_hours",methods = ['POST'])
+def filter_hours():
+    mongo_client = MongoDB()
+    data = request.json
+    hours = data.get("hours")
+    total_doc_len = mongo_client.get_documents_count_hours_length(hours)
+    return jsonify({
+        "doc_length":total_doc_len
+    })
+
+@app.route("/transaction_history",methods = ['POST'])
+def transaction_history():
+    mongo_client = MongoDB()
+    data = request.json
+    selected_date = data.get("selected_date")
+    start_hour = data.get("start_hour")
+    end_hour = data.get("end_hour")
+    return_list = mongo_client.get_documents_transaction_history(selected_date=selected_date,start_hour=start_hour,end_hour=end_hour)
+    final_return_list = []
+    for i in return_list:
+        new_dict = dict()
+        new_dict["account_number"] = i[0]
+        new_dict["name"] = i[1]
+        new_dict["uploaded_date"] = i[2]
+        new_dict["uploaded_time"] = i[3]
+        new_dict["uploaded_documents"] = i[4]
+        final_return_list.append(new_dict)
+
+    
+    return jsonify({
+        "rows_list":final_return_list
+    })
+
 
 
 @app.get('/shared/<task_id>')

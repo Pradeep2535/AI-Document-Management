@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from pymongo.mongo_client import MongoClient
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -192,6 +193,55 @@ class MongoDB:
             base64_data_list.append(base64_data)
 
         return base64_data_list,obj
+    
+    def get_documents_transaction_history(self,selected_date, start_hour, end_hour):
+        db = self.client['Accounts']
+        collection = db['accounts_details']
+
+        total_documents = collection.find()
+        total_documents_length = 0
+        return_list = []
+        for i in list(total_documents):
+            if "uploaded_documents" in dict(i).keys():
+                docs = list(dict(i)["uploaded_documents"])
+                total_documents_length += len(docs)
+
+                for j in docs:
+                    nested_doc = dict(j)
+                    if "date" in nested_doc.keys() and "time" in nested_doc.keys():
+                        date = nested_doc["date"]
+                        time = nested_doc["time"]
+                        
+                        if start_hour == "All time":
+                            if date == selected_date:
+                                return_list.append(i['acc_no'],i['name'],date, time, nested_doc["file_type"])
+                        else:
+                            print("sssssssssssssssssssssssssss")
+                            print(start_hour)
+                            if time >= start_hour and time <= end_hour and date==selected_date:
+                                return_list.append([i['acc_no'],i['name'],date, time, nested_doc["file_type"]])
+
+        return return_list        
+                    
+                
+        return return_list,total_documents_length
+
+    def get_documents_count_hours_length(self,hour):
+        db = self.client['Accounts']
+        collection = db['accounts_details']
+
+        total_documents = collection.find()
+        total_documents_length = 0
+      
+        for i in list(total_documents):
+            docs = list(dict(i)["uploaded_documents"])
+            total_documents_length += len(docs)
+
+        return total_documents_length       
+    
+
+            
+
     
 # obj = MongoDB()
 # response  = obj.upload_documents(name='Sharma',dob=None,address=' Delhi, India')

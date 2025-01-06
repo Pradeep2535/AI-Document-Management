@@ -140,9 +140,7 @@
   
 
   .dashboard-item{
-    margin-left:260px;
-    overflow: auto;
-
+border-radius: none;
 }
 .new-customer{
     display: flex;
@@ -167,7 +165,6 @@
   /* Container */
   .container-2{
     margin-top:20px;
-    margin-left:220px;
     background: #fff;
     padding: 20px;
     border-radius: 10px;
