@@ -172,6 +172,10 @@ def index():
 def about():
     return render_template('/customer.html')
 
+@app.route('/new')
+def new():
+    return render_template('/new.html')
+
 @app.route('/transaction')
 def transaction():
     return render_template('/transaction_history.html')
@@ -520,7 +524,7 @@ def fetch_accounts():
     for i in accounts:
         d=dict()
         doc = dict(i)
-        
+
         name = doc['name']
         dob = doc['dob']
         phone = doc['phone']
