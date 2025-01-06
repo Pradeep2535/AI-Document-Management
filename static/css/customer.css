@@ -245,64 +245,6 @@ main .insights>div{
    box-shadow: var(--box-shadow);
    transition: all .3s ease;
 }
-.expenses{
-  display:flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
-
-.card-2 {
-  width: 11rem;
-  height: 11rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #f9fafb; /* Neutral-50 equivalent */
-  color: #4b5563; /* Neutral-600 equivalent */
-  border-radius: 1rem;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.5s ease;
-}
-
-.card-2:hover {
-  transform: translateY(-0.5rem);
-}
-
-.card-bg {
-  position: absolute;
-  z-index: 10;
-  filter: blur(10px);
-  fill: #fca5a5; /* Red-300 equivalent */
-  transition: all 0.5s ease;
-}
-
-.card-2:hover .card-bg {
-  filter: blur(0);
-  transform: scale(1.05);
-}
-
-.content {
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.number {
-  font-weight: bold;
-  font-size: 3rem; /* Equivalent to text-6xl */
-  margin-left: 0.5rem;
-}
-
-.label {
-  font-weight: bold;
-  margin-top: 0.5rem;
-}
 
 main .insights > div:hover{
   box-shadow: none;
@@ -375,7 +317,7 @@ main .insights .sales svg circle{
    stroke-dasharray: 150;
 }
 
-main .insights .svg circle{
+main .insights .expenses svg circle{
   stroke-dashoffset: 10;
   stroke-dasharray: 150;
 }
@@ -604,7 +546,6 @@ MEDIA QUERY
 @media screen and (max-width:2000px) {
     .container{
       width: 94%;
-      grid-template-columns: auto  auto 2px;
     }
     aside .sidebar h3{
       display: block;
@@ -915,83 +856,4 @@ MEDIA QUERY PHONE
   100% {
       transform: rotate(360deg);
   }
-}
-
-
-.card-1 {
-  padding: 1rem;
-  background-color: #fff;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  width:100%;
-  border-radius: 20px;
-}
-
-.card-1 .title {
-  display: flex;
-  align-items: center;
-}
-
-.card-1 .title span {
-  position: relative;
-  padding: 0.5rem;
-  background-color: #10B981;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 9999px;
-}
-
-.card-1 .title span svg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ffffff;
-  height: 1rem;
-}
-
-.card-1 .title-text {
-  margin-left: 0.5rem;
-  color: #374151;
-  font-size: 18px;
-}
-
-.card-1 .percent {
-  margin-left: 0.5rem;
-  color: #02972f;
-  font-weight: 600;
-  display: flex;
-}
-
-.card-1 .data {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.card-1 .data p {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  color: #1F2937;
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-  font-weight: 700;
-  text-align: left;
-}
-
-.card-1 .data .range {
-  position: relative;
-  background-color: #E5E7EB;
-  width: 100%;
-  height: 0.5rem;
-  border-radius: 0.25rem;
-}
-
-.card-1 .data .range .fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: #10B981;
-  width: 76%;
-  height: 100%;
-  border-radius: 0.25rem;
 }

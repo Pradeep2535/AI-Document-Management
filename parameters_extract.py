@@ -85,6 +85,8 @@ def load_document(text, obj):
     # obj.pop('uploaded_documents', None)
     document_text = text
     account_details = str(obj)
+    print("tttttttttttttttttttttttt")
+    print(document_text,account_details)
     print("Document successfully loaded.")
 
 
@@ -96,7 +98,7 @@ def chatbot_answer(query):
     system_prompt = f"""
     You are a helpful chatbot assistant with access to sensitive user documents and account details. 
     Your task is to provide accurate answers based on the information provided below. 
-    Do not answer questions unrelated to the document or account details.
+    Do not answer questions unrelated to the document or account details given to you, if the user asks about name other things that had been given then you can answer.
 
     Document Information:
     {document_text}
@@ -150,7 +152,7 @@ def reset_memory():
 
 document_text = ""
 account_details = ""
-llm2 = GoogleGenerativeAI(model='gemini-1.5-flash', google_api_key=GOOGLE_API_KEY)
+llm2 = ChatGoogleGenerativeAI(model='gemini-1.5-flash', google_api_key=GOOGLE_API_KEY)
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 

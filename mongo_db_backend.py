@@ -185,8 +185,10 @@ class MongoDB:
 
         db = self.client['Accounts']
         collection = db['accounts_details']
-
+        account_no = int(account_no)
+        
         obj = collection.find_one({"acc_no":account_no})
+        
         uploaded_documents_list = list(obj["uploaded_documents"])
         for single_document in uploaded_documents_list:
             base64_data = single_document["file_data"]

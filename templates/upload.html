@@ -159,7 +159,7 @@
               <span class="material-symbols-sharp">insights </span>
               <h3>Analytics</h3>
            </a>
-           <a href="#">
+           <a href="/chat">
               <span class="material-symbols-sharp">mail_outline </span>
               <h3>Messages</h3>
            
@@ -241,7 +241,7 @@
         </div>
        <!-- end insights -->
         </div>
-        <div class="container-2" style="margin-left:0px; width:170%; margin-right:10px;">
+        <div class="container-2" id="container-2" style="display:none; margin-left:0px; width:170%; margin-right:10px;">
           <h1>Multiple accounts found</h1>
           <table id="customerTable">
               <thead>
@@ -268,7 +268,7 @@
 // Add click event listener to the button
 retryButton.addEventListener("click", function () {
     dialogBox.style.display = "block"; // Show the dialog box
-});
+ });
     document.getElementById('uploadForm').onsubmit = async function (e) {
       e.preventDefault();
     document.getElementById('spinner').style.display = 'block';
@@ -305,10 +305,14 @@ retryButton.addEventListener("click", function () {
             window.onclick = function (event) {
                 if (event.target === modal) {
                     modal.style.display = 'none';
+
                 }
             };
       } else if (result.upload_status === 'display_accounts') {
         const spinner = document.getElementById('spinner');
+        let container_2 = document.getElementById("container-2");
+      container_2.style.display = "block";
+console.log('huuuuuuu');
         spinner.style.display = 'none';
         const modal = document.getElementById('successModal');
             modal.style.display = 'flex';
@@ -322,11 +326,14 @@ retryButton.addEventListener("click", function () {
             window.onclick = function (event) {
                 if (event.target === modal) {
                     modal.style.display = 'none';
+                    
+
                 }
             };
           //responseDiv.innerHTML = '<p>Multiple accounts found. Please choose one:</p>';
 
           populateTable(result);
+
       } else {
         const spinner = document.getElementById('spinner');
         spinner.style.display = 'none';
@@ -395,7 +402,6 @@ function generateCustomerName(index,result) {
 
 // Function to populate table
 function populateTable(result) {
-  
   const len = result.accounts.length;
     const tableBody = document.querySelector("#customerTable tbody");
 
