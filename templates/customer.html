@@ -123,8 +123,8 @@
             <input type="text" id="profileLink" class="form-control url-input" readonly />
             <!-- <button class="open-url-btn">Open URL</button> -->
             <button id="copyLinkButton" class="copy-btn">Copy URL</button>
-            <button id="sendSMS" class="sms-btn">Send SMS</button>
-            <button id="sendmail" class="mail-btn">Send E-Mail</button>
+            <button id="sendSMS" data-name="" data-phone="" class="sms-btn">Send SMS</button>
+            <button id="sendmail" data-name="" data-email="" class="mail-btn">Send E-Mail</button>
           </div>
           <script>
             document.getElementById('copyLinkButton').addEventListener('click', () => {
@@ -220,6 +220,10 @@
             .then(data => {
                const profileLink = document.getElementById('profileLink');
                profileLink.value = data.upload_link;
+               document.getElementById('sendSMS').setAttribute('data-name', name);
+               document.getElementById('sendSMS').setAttribute('data-phone', phone);
+               document.getElementById('sendmail').setAttribute('data-name', name);
+               document.getElementById('sendmail').setAttribute('data-email', email);
             })
             .catch(error => {
                console.error('Error generating upload link:', error);
@@ -279,6 +283,40 @@
         alert('Failed to send SMS');
       });
    }
+
+   // Attach event listener to send SMS button
+   document.getElementById('sendSMS').addEventListener('click', sendSMS);
+
+   // send email via api
+   function sendEmail() {
+      const profileLink = document.getElementById('profileLink');
+      const url = profileLink.value;
+      const api_url = 'http://localhost:5000/send_email'; 
+      const data = {
+         email: document.getElementById('sendmail').getAttribute('data-email'),
+         shared_link: url
+      };
+      fetch(api_url, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+         console.log('Email sent:', data);
+         alert('Email sent successfully');
+      })
+      .catch(error => {
+         console.error('Error sending email:', error);
+         alert('Failed to send email');
+      });
+   }
+
+   // Attach event listener to send email button
+   document.getElementById('sendmail').addEventListener('click', sendEmail);
+
    
   </script>
   

@@ -13,4 +13,7 @@ python-magic
 redis
 celery
 flask-caching
-python-libmagic
+google-auth 
+google-auth-oauthlib 
+google-auth-httplib2 
+google-api-python-client

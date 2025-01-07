@@ -17,8 +17,8 @@ import random
 import base64
 from langchain.memory import ConversationBufferMemory
 from datetime import datetime
-from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from flask_mail import Mail, Message
 
 now = datetime.now()
 
@@ -29,15 +29,15 @@ current_time = now.strftime("%H:%M")  # Time as string in HH:MM
 app = Flask(__name__,template_folder='templates', static_folder='static')
 app.config['SECRET_KEY'] = 'Thisisasecret!'  # Ensure the secret key is set
 
-app.config['MAIL_SERVER'] = 'smtp.example.com'
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'your-email@example.com'
-app.config['MAIL_PASSWORD'] = 'your-email-password'
+app.config['MAIL_USERNAME'] = 'appianhackathan@gmail.com'
+app.config['MAIL_PASSWORD'] = 'gvod jshf stez tpew'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-
 mail = Mail(app)
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
@@ -524,9 +524,6 @@ def shared(token):
     except (SignatureExpired, BadTimeSignature):
         return jsonify({"error": "Invalid or expired token"}), 400
     
-# @app.route('/send_otp', methods=['POST'])
-# def send_otp():
-#     data = request.json
 @app.route('/fetch_and_display',methods = ['GET'])
 def fetch_accounts():
     mongo_client = MongoDB()
@@ -553,6 +550,19 @@ def fetch_accounts():
         "accounts":l
     })
         
+@app.route('/send_mail',methods = ['POST'])
+def send_mail():
+    data = request.json
+    email = data.get('email')
+    shared_link = data.get('shared_link')
+    msg = Message(subject='Shared Upload Link',
+                    sender=app.config.get("MAIL_USERNAME"),
+                    recipients=[email],
+                    body=f'Click on the link to upload the documents: {shared_link}')
+    mail.send(msg)
+    return jsonify({
+        "status":"success"
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
