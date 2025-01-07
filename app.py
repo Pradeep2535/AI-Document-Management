@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, url_for
+from flask import Flask, request, jsonify, render_template, url_for, redirect
 from parameters_extract import analyze_keywords, identify_document,load_document, chatbot_answer,reset_memory
 from mongo_db_backend import MongoDB
 from bson.binary import Binary
@@ -20,6 +20,7 @@ from datetime import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
 import requests
+
 
 now = datetime.now()
 
@@ -168,7 +169,8 @@ def index():
 
 @app.route('/customer')
 def about():
-    return render_template('/customer.html')
+    message = request.args.get('message')
+    return render_template('customer.html', message=message)
 
 @app.route('/transaction')
 def transaction():
@@ -564,9 +566,7 @@ def send_mail():
     msg.body = f"Hello {name},\n\nYou have been shared a file upload link. Please click on the link below to upload your documents.\n\n{shared_link}\n\nRegards,\nTeam DataHive"
 
     mail.send(msg)
-    return jsonify({
-        "status":"success"
-    })
+    return redirect(url_for('about', message="Email sent successfully!"))
 
 @app.route('/send_sms',methods = ['POST'])
 def send_sms():

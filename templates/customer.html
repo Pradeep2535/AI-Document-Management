@@ -100,7 +100,12 @@
       <main>
         <div class="dashboard-item"> 
             <h1>Customers</h1>
-
+            <!-- Display success message -->
+            {% if message %}
+            <script>
+                alert("{{ message }}");
+            </script>
+            {% endif %}
         <div class="insights" id="salesContainer">
             <!-- Sales cards will be dynamically added here -->
         </div>
@@ -230,20 +235,22 @@
             })
             .then(response => response.json())
             .then(data => {
+               alert('Upload link generated successfully!');
                const profileLink = document.getElementById('profileLink');
                profileLink.value = data.upload_link;
-               const smsForm = document.getElementById('sms-form');
-               smsForm.value = phone;
-               const smsFormLink = document.getElementById('sms-form-link');
-               smsFormLink.value = data.upload_link;
-               const smsFormName = document.getElementById('sms-form-name');
-               smsFormName.value = name;
+               // const smsForm = document.getElementById('sms-form');
+               // smsForm.value = phone;
+               // const smsFormLink = document.getElementById('sms-form-link');
+               // smsFormLink.value = data.upload_link;
+               // const smsFormName = document.getElementById('sms-form-name');
+               // smsFormName.value = name;
                const mailForm = document.getElementById('mail-form');
                mailForm.value = email;
                const mailFormLink = document.getElementById('mail-form-link');
                mailFormLink.value = data.upload_link;
                const mailFormName = document.getElementById('mail-form-name');
                mailFormName.value = name;
+
             })
             .catch(error => {
                console.error('Error generating upload link:', error);
