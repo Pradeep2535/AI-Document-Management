@@ -258,7 +258,7 @@ main .insights>div{
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f9fafb; /* Neutral-50 equivalent */
+  background-color: #f5c6cb; /* Neutral-50 equivalent */
   color: #4b5563; /* Neutral-600 equivalent */
   border-radius: 1rem;
   overflow: hidden;
@@ -313,6 +313,7 @@ main .insights>div  span{
      color: var(--clr-white);
      font-size: 2rem; 
   }
+
 
 main .insights > div .middle{
    display: flex;
@@ -446,7 +447,7 @@ Right Side
 }
 .right .top{
   display: flex;
-  justify-content: start;
+  justify-content: end;
   gap: 2rem;
 }
 

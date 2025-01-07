@@ -89,8 +89,13 @@
 
       <main>
         <div class="dashboard-item"> 
-            <h1>New Customer</h1>
-
+            <h1>Customers</h1>
+            <!-- Display success message -->
+            {% if message %}
+            <script>
+                alert("{{ message }}");
+            </script>
+            {% endif %}
         <div class="insights" id="salesContainer">
             
         </div>
@@ -98,6 +103,44 @@
     </main>
       
     
+   <div id="linkModal" class="modal">
+      <div class="modal-content">
+         <span class="close-modal">&times;</span>
+         <h2>Shared Link</h2>
+          <div class="form-group">
+            <label for="profileLink"></label>
+            <input type="text" id="profileLink" class="form-control url-input" readonly />
+            <!-- <button class="open-url-btn">Open URL</button> -->
+             <div class="dialog-actions">
+            <button id="copyLinkButton" class="copy-btn">Copy URL</button>
+            <!-- <form action="/send_sms" method="POST">
+               <input type="hidden" id="sms-form" name="phone" />
+               <input type="hidden" id="sms-form-name" name="name" />
+               <input type="hidden" id="sms-form-link" name="shared_link" />
+               <button id="sendSMS" type="submit" class="sms-btn">Send SMS</button>
+            </form> -->
+            <form action="/send_mail" method="POST">
+               <input type="hidden" id="mail-form" name="email" />
+               <input type="hidden" id="mail-form-name" name="name" />
+               <input type="hidden" id="mail-form-link" name="shared_link" />
+               <button id="sendmail" type="submit" class="mail-btn">Send E-Mail</button>
+            </form>
+         </div>
+          </div>
+          <script>
+            document.getElementById('copyLinkButton').addEventListener('click', () => {
+               const profileLink = document.getElementById('profileLink');
+               profileLink.select();
+               document.execCommand('copy');
+               alert('URL copied to clipboard');
+            });
+            // document.querySelector('.open-url-btn').addEventListener('click', () => {
+            //    const profileLink = document.getElementById('profileLink');
+            //    window.open(profileLink.value, '_blank');
+            // });
+          </script>
+      </div>
+   </div>
 
    <script src="/static/js/script.js"></script>
    <script>
@@ -118,24 +161,26 @@
           
           // Assign unique data attributes for each button
           salesCard.innerHTML = `
-            <div class="update" style="display: flex; margin:5px;">
-              <div class="profile-photo" style="margin:30px;">
-                <img src="/static/assets/profile-3.jpg" alt=""/>
+            <div class="update" style="display: flex; margin:5px; justify-content: space-between;">
+               <div style="display: flex; align-items: center;">
+              <div class="profile-photo" style="margin:10px; margin-right: 20px;  align-items: center; display: flex;">
+                <img src="/static/assets/profile-3.jpg" style="width:60px; height:auto" alt=""/>
               </div>
               <div class="message">
                 <h4><b>${account.name}</b></h4>
                 <p><b>DOB:</b> ${account.dob}</p>
                 <p><b>Phone:</b> ${account.phone}</p>
                 <p><b>Email:</b> ${account.email}</p>
+               </div>
+               </div>
                 <div class="dialog-actions">
-                  <button class="send-link-btn cancel-btn" style="margin:10px;"
+                  <button class="send-link-btn share-btn";"
                     data-name="${account.name}" 
                     data-dob="${account.dob}" 
                     data-phone="${account.phone}" 
                     data-email="${account.email}">
                     Send link
                   </button>
-                </div>
               </div>
             </div>
           `;
@@ -158,8 +203,43 @@
               phone,
               email
             };
+
+            user_data = {
+               user_data: selectedAccount
+            }
   
             console.log('Selected Account:', selectedAccount);
+            console.log(JSON.stringify(user_data   ));
+            fetch('/generate_upload_link', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(user_data)
+            })
+            .then(response => response.json())
+            .then(data => {
+               alert('Upload link generated successfully!');
+               const profileLink = document.getElementById('profileLink');
+               profileLink.value = data.upload_link;
+               // const smsForm = document.getElementById('sms-form');
+               // smsForm.value = phone;
+               // const smsFormLink = document.getElementById('sms-form-link');
+               // smsFormLink.value = data.upload_link;
+               // const smsFormName = document.getElementById('sms-form-name');
+               // smsFormName.value = name;
+               const mailForm = document.getElementById('mail-form');
+               mailForm.value = email;
+               const mailFormLink = document.getElementById('mail-form-link');
+               mailFormLink.value = data.upload_link;
+               const mailFormName = document.getElementById('mail-form-name');
+               mailFormName.value = name;
+
+            })
+            .catch(error => {
+               console.error('Error generating upload link:', error);
+            });
+            openModal();
           }
         });
   
@@ -167,6 +247,30 @@
         console.error('Error fetching data:', error);
       }
     });
+
+   // Function to open the modal
+   function openModal() {
+     const modal = document.getElementById('linkModal');
+     modal.style.display = 'block';
+   }
+
+   // Function to close the modal
+   function closeModal() {
+     const modal = document.getElementById('linkModal');
+     modal.style.display = 'none';
+   }
+
+   // Attach event listener to close modal button
+   document.querySelector('.close-modal').addEventListener('click', closeModal);
+
+   // Close modal when clicking outside of the modal content
+   window.addEventListener('click', (e) => {
+     const modal = document.getElementById('linkModal');
+     if (e.target === modal) {
+      closeModal();
+     }
+   });
+   
   </script>
   
     
