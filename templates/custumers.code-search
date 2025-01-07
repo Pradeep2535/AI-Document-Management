@@ -1,0 +1,9 @@
+# Query: custumers
+# ContextLines: 1
+
+1 result - 1 file
+
+templates/index.html:
+  65                <span class="material-symbols-sharp">person_outline </span>
+  66:               <h3 style="margin-bottom:1px;">Customers</h3>
+  67             </a>

@@ -21,11 +21,7 @@ themeToggler.addEventListener('click',()=>{
 })
 
 
-// --------------
 
-// Get elements
-
-// Assuming 'result' is an array of transaction objects
 const result = [
     {
         account_number: "123456789",
@@ -43,10 +39,10 @@ const result = [
     }
 ];
 
-// Function to populate the table dynamically
+
 function populateTransactionTable(data) {
     const tableBody = document.querySelector('.transaction-table tbody');
-    tableBody.innerHTML = ""; // Clear existing rows, if any
+    tableBody.innerHTML = ""; 
 
     data.forEach((transaction) => {
         const row = document.createElement('tr');
@@ -63,5 +59,5 @@ function populateTransactionTable(data) {
     });
 }
 
-// Call the function with the result array
+
 populateTransactionTable(result);

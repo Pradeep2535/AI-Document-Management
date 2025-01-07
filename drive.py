@@ -57,6 +57,7 @@ def create_or_get_folder(folder_name):
     """
     folder_id = get_folder_id_by_name(folder_name)
     if folder_id:
+        print('1111111111111111111111-',folder_id)
         return folder_id
     return create_folder(folder_name)
 

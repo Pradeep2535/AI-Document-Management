@@ -138,13 +138,7 @@
 <body>
    
       
-      <!-- --------------
-        end asid
-      -------------------- -->
-
-      <!-- --------------
-        start main part
-      --------------- -->
+      
 
       <main>
         <div class="dashboard-item"> 
@@ -190,7 +184,7 @@
                   </tr>
               </thead>
               <tbody>
-                  <!-- Rows will be added dynamically -->
+                 
               </tbody>
           </table>
       </div>
@@ -221,20 +215,20 @@
       console.log(result);
       console.log('djjjjjjjh');
       const responseDiv = document.getElementById('response');
-      //console.log(result);
+      
       if (result.upload_status === 'success') {
         console.log('1112222222222222');
-          //responseDiv.innerHTML = '<p>File uploaded successfully!</p>';
+          
          document.getElementById('spinner').style.display = 'none';
           const modal = document.getElementById('successModal');
             modal.style.display = 'flex';
 
-            // Close modal when the close button is clicked
+            
             document.getElementById('closeModal').onclick = function () {
                 modal.style.display = 'none';
             };
 
-            // Close modal when clicking outside the modal content
+            
             window.onclick = function (event) {
                 if (event.target === modal) {
                     modal.style.display = 'none';
@@ -250,12 +244,12 @@ console.log('huuuuuuu');
         const modal = document.getElementById('successModal');
             modal.style.display = 'flex';
 
-            // Close modal when the close button is clicked
+            
             document.getElementById('closeModal').onclick = function () {
                 modal.style.display = 'none';
             };
 
-            // Close modal when clicking outside the modal content
+            
             window.onclick = function (event) {
                 if (event.target === modal) {
                     modal.style.display = 'none';
@@ -263,7 +257,7 @@ console.log('huuuuuuu');
 
                 }
             };
-          //responseDiv.innerHTML = '<p>Multiple accounts found. Please choose one:</p>';
+          
 
           populateTable(result);
 
@@ -291,9 +285,9 @@ console.log('huuuuuuu');
       const result = await response.json();
       console.log("--------------------------------------------------------------");
       console.log(result);
-      //document.getElementById('response').innerHTML = `<p>${result.message}</p>`;
+      
       if (result.upload_status === 'success') {
-        // Show the modal dialog
+        
         console.log('1333333333333333333333');
         console.log("ooooooooooooooo");
         console.log(result);
@@ -301,16 +295,16 @@ console.log('huuuuuuu');
         const modal = document.getElementById('successModal');
         modal.style.display = 'flex';
 
-        // Update modal content if needed
+        
         const modalContent = modal.querySelector('p');
         modalContent.innerHTML = `File uploaded successfully! Account Number: ${result.acc_no}`;
 
-        // Close modal when the close button is clicked
+        
         document.getElementById('closeModal').onclick = function () {
             modal.style.display = 'none';
         };
 
-        // Close modal when clicking outside the modal content
+        
         window.onclick = function (event) {
             if (event.target === modal) {
                 modal.style.display = 'none';
@@ -318,37 +312,34 @@ console.log('huuuuuuu');
         };
     }
   }
-  // -----------------------------------------------------------------------------------------
-
- 
-// Function to generate Customer ID
+  
 function generateCustomerID(index,result) {
   console.log(result.accounts[index].name);
     return result.accounts[index].name;
 }
 
-// Function to generate Customer Names
+
 function generateCustomerName(index,result) {
   console.log(result.accounts[index].acc_no);
     return result.accounts[index].acc_no;
 }
 
-// Function to populate table
+
 function populateTable(result) {
   const len = result.accounts.length;
     const tableBody = document.querySelector("#customerTable tbody");
 
-    for (let i = 0; i < len; i++) { // Loop through accounts
+    for (let i = 0; i < len; i++) { 
         const newRow = document.createElement("tr");
 
-        // Generate and append Customer ID
+        
         const customerIdCell = document.createElement("td");
         const customerId = generateCustomerID(i,result);
         console.log(customerId);
         customerIdCell.textContent = customerId;
         newRow.appendChild(customerIdCell);
 
-        // Generate and append Customer Name
+        
         const customerNameCell = document.createElement("td");
         const customerName = generateCustomerName(i,result);
         console.log(customerName);
@@ -356,20 +347,20 @@ function populateTable(result) {
         newRow.appendChild(customerNameCell);
 
         const customerMongoId = result.accounts[i]._id;
-        // Add "View" button in a new column
+       
         const actionsCell = document.createElement("td");
         const viewButton = document.createElement("button");
         viewButton.textContent = "Select";
         viewButton.className = "view-button";
 
-        // Add click event to the View button
+        
         viewButton.addEventListener("click", () => {
             console.log(`Customer ID: ${customerId}, Customer Name: ${customerName} id : ${customerMongoId}`);
             let filedocument = result.file_document;
             filedocument.file_name = `${customerName}_${result.document_type}`;
             console.log(filedocument); 
             selectAccount(result.accounts[i], filedocument, result.document_type, result.file_data);
-            //alert(`Customer Details\n\nID: ${customerId}\nName: ${customerName}`);
+            
         });
 
         actionsCell.appendChild(viewButton);
@@ -379,7 +370,7 @@ function populateTable(result) {
     }
 }
 
-// Populate table on page load
+
 window.onload = populateTable;
    </script>
 </body>

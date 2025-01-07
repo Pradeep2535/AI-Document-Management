@@ -28,7 +28,7 @@
          
          <div class="top">
            <div class="logo">
-             <h2>C <span class="danger">BABAR</span> </h2>
+             <h2><span class="danger">Appian</span> </h2>
            </div>
            <div class="close" id="close_btn">
             <span class="material-symbols-sharp">
@@ -36,7 +36,7 @@
               </span>
            </div>
          </div>
-         <!-- end top -->
+         
           <div class="sidebar">
 
             <a href="/">
@@ -45,11 +45,7 @@
            </a>
            <a href="/customer"  class="active">
               <span class="material-symbols-sharp">person_outline </span>
-              <h3>custumers</h3>
-           </a>
-           <a href="#">
-              <span class="material-symbols-sharp">insights </span>
-              <h3>Analytics</h3>
+              <h3>Customers</h3>
            </a>
            <a href="/chat">
               <span class="material-symbols-sharp">mail_outline </span>
@@ -62,7 +58,7 @@
            </a>
            <a href="/transaction">
               <span class="material-symbols-sharp">report_gmailerrorred </span>
-              <h3>Transaction History</h3>
+              <h3>Upload History</h3>
            </a>
            <a href="#">
               <span class="material-symbols-sharp">settings </span>
@@ -89,30 +85,18 @@
            </a>
           </div>
       </aside>
-      <!-- --------------
-        end asid
-      -------------------- -->
-
-      <!-- --------------
-        start main part
-      --------------- -->
+     
 
       <main>
         <div class="dashboard-item"> 
             <h1>New Customer</h1>
 
         <div class="insights" id="salesContainer">
-            <!-- Sales cards will be dynamically added here -->
+            
         </div>
         </div>
     </main>
-      <!------------------
-         end main
-        ------------------->
-
-      <!----------------
-        start right main 
-      ---------------------->
+      
     
 
    <script src="/static/js/script.js"></script>
@@ -121,7 +105,7 @@
       const salesContainer = document.getElementById('salesContainer');
       
       try {
-        const response = await fetch('/fetch_and_display');  // Call Flask endpoint
+        const response = await fetch('/fetch_and_display');  
         const data = await response.json();
         
         const accounts = data.accounts;

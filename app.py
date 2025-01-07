@@ -117,7 +117,7 @@ def extract_text_from_image(uploaded_file):
         image_bytes = BytesIO(uploaded_file)
         
         # Open the image from the BytesIO object
-        image = Image.open('aadhar_backside.png')
+        image = Image.open("C:\\Users\\malap\\Pictures\\Screenshots\\Screenshot 2025-01-07 113053.png")
         
         # Use pytesseract to extract text from the image
         text = pytesseract.image_to_string(image, lang='tam+eng+hin')
@@ -137,7 +137,8 @@ def classify_document(text):
     pan_keywords = ["permanent account number", "income tax department"]
 
     voter_keywords = ["election commission of india", "epic number", "electoral photo identity card"]
-
+    
+    
     text_lower = text.lower()
 
     if all(keyword in text_lower for keyword in aadhaar_keywords):
@@ -234,7 +235,9 @@ def upload_file():
         document_type = classify_document(extracted_text)
         
         print(document_type)
+        print(extracted_text)
         name, dob, address = analyze_keywords(text=extracted_text)
+        print("111111111111111111111111111hi")
         print(name,dob,address)
         if name is None:
             status = 'upload_different_document'

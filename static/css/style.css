@@ -122,7 +122,7 @@ b{
   color: var(--clr-warnig);
 }
 .dashboard-item{
-    margin-left:220px;
+    margin-left: 260px;
 }
 
 /* aside */
@@ -866,33 +866,73 @@ MEDIA QUERY PHONE
 .filter-group button:hover {
   background-color: #45a049;
 }
-
-.dialog-box-2{
+.dialog-box-2 {
   display: none; /* Initially hidden */
   padding: 20px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  border-radius: 5px;
-  font-size: 16px;
+  background-color: #d4edda; /* Soft green for success or info */
+  color: #155724; /* Dark green for text */
+  border: 1px solid #c3e6cb; /* Lighter green border */
+  border-radius: 8px; /* More rounded corners */
+  font-size: 18px; /* Slightly larger font size */
+  font-family: 'Arial', sans-serif; /* Clean sans-serif font */
   text-align: center;
   width: fit-content; /* Prevents it from taking the entire page width */
-  max-width: 80%; /* Ensures it doesn't stretch too far */
+  max-width: 90%; /* Ensures it doesn't stretch too far */
   position: absolute; /* Positioned relative to the viewport */
   top: 50%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%); /* Adjust to true center */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Larger shadow for a more lifted effect */
+  animation: fadeIn 0.3s ease-out; /* Smooth fade-in animation */
 }
+
+/* Add smooth transition effects */
+.dialog-box-2 {
+  transition: all 0.3s ease;
+}
+
+/* Add a hover effect to make it interactive */
+.dialog-box-2:hover {
+  background-color: #c3e6cb; /* Slightly darker green on hover */
+  cursor: pointer;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Centering the spinner on the screen */
+.spinner-container {
+  position: fixed; /* Ensure it stays on top of other content */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  display: flex; /* Flexbox for centering */
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  background-color: rgba(255, 255, 255, 0.8); /* Optional: Light overlay */
+  z-index: 9999; /* Ensure it is above other elements */
+}
+
+/* Spinner styles */
 .spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  
-  /* Centering the spinner */
+  width: 70.4px;
+  height: 70.4px;
+  --clr: rgb(247, 197, 159);
+  --clr-alpha: rgba(247, 197, 159, 0.1);
+  animation: spinner 1.6s infinite ease;
+  transform-style: preserve-3d;
+
+  /* Centering */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -900,14 +940,56 @@ MEDIA QUERY PHONE
 }
 
 
-@keyframes spin {
+.spinner > div {
+  background-color: var(--clr-alpha);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  border: 3.5px solid var(--clr);
+}
+
+.spinner div:nth-of-type(1) {
+  transform: translateZ(-35.2px) rotateY(180deg);
+}
+
+.spinner div:nth-of-type(2) {
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
+}
+
+.spinner div:nth-of-type(3) {
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
+}
+
+.spinner div:nth-of-type(4) {
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
+}
+
+.spinner div:nth-of-type(5) {
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
+}
+
+.spinner div:nth-of-type(6) {
+  transform: translateZ(35.2px);
+}
+
+@keyframes spinner {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
   }
+
+  50% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+  }
+
   100% {
-      transform: rotate(360deg);
+    transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
   }
 }
+
 
 
 .card-1 {
@@ -1071,4 +1153,17 @@ canvas#barChart {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.rajesh{
+  background-color: #3498db; /* Soft blue background */
+    color: white; /* White text color */
+    padding: 15px 30px; /* Add padding around the text */
+    border-radius: 12px; /* Rounded corners */
+    font-size: 28px; /* Adjust font size */
+    font-weight: bold; /* Make the font bold */
+    text-align: center; /* Center the text */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for a lifted effect */
+    margin: 30px auto; /* Add space above and below, center horizontally */
+    width: fit-content; 
 }

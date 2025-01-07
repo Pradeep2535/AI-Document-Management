@@ -24,34 +24,31 @@ themeToggler.addEventListener('click',()=>{
 })
 
 
-// --------------
 
-// Get elements
 const logoutButton = document.getElementById("logoutButton");
 const dialogBox = document.getElementById("dialogBox");
 const confirmLogout = document.getElementById("confirmLogout");
 const cancelLogout = document.getElementById("cancelLogout");
 
-// Show dialog when "Log Out" button is clicked
+
 logoutButton.addEventListener("click", () => {
     dialogBox.style.display = "flex";
 });
 
-// Handle "Yes" button click
+
 confirmLogout.addEventListener("click", () => {
     alert("You have been logged out.");
     dialogBox.style.display = "none";
-    // Redirect to login page or logout logic can go here
-    // window.location.href = "/login"; 
+    
 });
 
-// Handle "Cancel" button click
+
 cancelLogout.addEventListener("click", () => {
     dialogBox.style.display = "none";
 });
 
 
-// new js code
+
 
 
 

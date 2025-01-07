@@ -10,7 +10,7 @@ from constants import GOOGLE_API_KEY
 
 def analyze_keywords(text):
     response_schemas = [
-        ResponseSchema(name="name", description="The name of the person."),
+        ResponseSchema(name="name", description="The name of the person example rajesh,pradeep,etc,...."),
         ResponseSchema(name="dob", description="The date of birth (DOB) of the person in YYYY-MM-DD format."),
         ResponseSchema(name="address", description="The address of the person."),
     ]
@@ -61,7 +61,7 @@ def identify_document(text):
         )
     output_parser = StrOutputParser()
 
-    document_names = ["Aadhaar", "PAN", "Gas Bill", "Electricity Bill", "Passport"]
+    document_names = ["Aadhaar", "PAN", "Gas Bill", "Electricity Bill", "Passport", "Marksheet"]
 
     prompt = prompt_template.format( 
         document_text = text[:1000], #limiting

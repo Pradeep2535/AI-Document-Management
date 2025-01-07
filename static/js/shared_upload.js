@@ -15,7 +15,7 @@
 
 
 
-// new js code
+
 
 
 
@@ -33,7 +33,7 @@ document.getElementById('uploadForm').onsubmit = async function (e) {
 
     const result = await response.json();
     const responseDiv = document.getElementById('response');
-    //console.log(result);
+    
     if (result.upload_status === 'success') {
         responseDiv.innerHTML = '<p>File uploaded successfully!</p>';
     } else if (result.upload_status === 'display_accounts') {
