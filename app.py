@@ -547,7 +547,7 @@ def fetch_accounts():
     for i in accounts:
         d=dict()
         doc = dict(i)
-
+        print(doc)
         name = doc['name']
         dob = doc['dob']
         phone = doc['phone']

@@ -131,6 +131,7 @@ b{
   /* width:180px; */
  }
  aside .top{
+  padding-left:12px;
   background: var(--clr-white);
   display: flex;
   align-items: center;
