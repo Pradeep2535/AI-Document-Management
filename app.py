@@ -19,6 +19,7 @@ from langchain.memory import ConversationBufferMemory
 from datetime import datetime
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from flask_mail import Mail, Message
+import requests
 
 now = datetime.now()
 
@@ -32,13 +33,14 @@ app.config['SECRET_KEY'] = 'Thisisasecret!'  # Ensure the secret key is set
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'appianhackathan@gmail.com'
 app.config['MAIL_PASSWORD'] = 'gvod jshf stez tpew'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
+app.config['SMS_TOKEN'] = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTZDRDEwNzc3M0EzMzREOSIsImlhdCI6MTczNjIyNjYwMywiZXhwIjoxODkzOTA2NjAzfQ.10OgqhCRW6H0hsn-2KwK0hRmDsscT_HGkSmf2RTI9ztzH6bMDNMdepZ-TnmTt3C5N0SqY1jn2XZMuzil4T-lMQ"
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
@@ -552,17 +554,36 @@ def fetch_accounts():
         
 @app.route('/send_mail',methods = ['POST'])
 def send_mail():
-    data = request.json
-    email = data.get('email')
-    shared_link = data.get('shared_link')
+    email = request.form.get('email')
+    shared_link = request.form.get('shared_link')
+    name = request.form.get('name')
     msg = Message(subject='Shared Upload Link',
                     sender=app.config.get("MAIL_USERNAME"),
-                    recipients=[email],
-                    body=f'Click on the link to upload the documents: {shared_link}')
+                    recipients=[email, 'sandeepadithya.k@gmail.com'])
+    
+    msg.body = f"Hello {name},\n\nYou have been shared a file upload link. Please click on the link below to upload your documents.\n\n{shared_link}\n\nRegards,\nTeam DataHive"
+
     mail.send(msg)
     return jsonify({
         "status":"success"
     })
+
+@app.route('/send_sms',methods = ['POST'])
+def send_sms():
+    # phone = request.form.get('phone')
+    phone = "9025081684"
+
+    shared_link = request.form.get('shared_link')
+    name = request.form.get('name')
+    headers = {
+        'authToken': app.config['SMS_TOKEN']
+    }
+    # url = "https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=C-6CD107773A334D9&senderId=UTOMOB&type=SMS&flowType=SMS&mobileNumber="+phone+"&message="+f"Hello {name},\n\nYou have been shared a file upload link. Please click on the link below to upload your documents.\n\n{shared_link}\n\nRegards,\nTeam DataHive"
+    url = "https://cpaas.messagecentral.com/verification/v3/send?countryCode=91&customerId=C-6CD107773A334D9&senderId=UTOMOB&type=SMS&flowType=SMS&mobileNumber=8248574617&message=Welcome to Message Central. We are delighted to have you here! - Powered by DataHive"
+    response = requests.post(url, headers=headers)
+
+    return response.json()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -122,9 +122,21 @@
             <label for="profileLink"></label>
             <input type="text" id="profileLink" class="form-control url-input" readonly />
             <!-- <button class="open-url-btn">Open URL</button> -->
+             <div class="dialog-actions">
             <button id="copyLinkButton" class="copy-btn">Copy URL</button>
-            <button id="sendSMS" data-name="" data-phone="" class="sms-btn">Send SMS</button>
-            <button id="sendmail" data-name="" data-email="" class="mail-btn">Send E-Mail</button>
+            <!-- <form action="/send_sms" method="POST">
+               <input type="hidden" id="sms-form" name="phone" />
+               <input type="hidden" id="sms-form-name" name="name" />
+               <input type="hidden" id="sms-form-link" name="shared_link" />
+               <button id="sendSMS" type="submit" class="sms-btn">Send SMS</button>
+            </form> -->
+            <form action="/send_mail" method="POST">
+               <input type="hidden" id="mail-form" name="email" />
+               <input type="hidden" id="mail-form-name" name="name" />
+               <input type="hidden" id="mail-form-link" name="shared_link" />
+               <button id="sendmail" type="submit" class="mail-btn">Send E-Mail</button>
+            </form>
+         </div>
           </div>
           <script>
             document.getElementById('copyLinkButton').addEventListener('click', () => {
@@ -133,10 +145,10 @@
                document.execCommand('copy');
                alert('URL copied to clipboard');
             });
-            document.querySelector('.open-url-btn').addEventListener('click', () => {
-               const profileLink = document.getElementById('profileLink');
-               window.open(profileLink.value, '_blank');
-            });
+            // document.querySelector('.open-url-btn').addEventListener('click', () => {
+            //    const profileLink = document.getElementById('profileLink');
+            //    window.open(profileLink.value, '_blank');
+            // });
           </script>
       </div>
    </div>
@@ -220,10 +232,18 @@
             .then(data => {
                const profileLink = document.getElementById('profileLink');
                profileLink.value = data.upload_link;
-               document.getElementById('sendSMS').setAttribute('data-name', name);
-               document.getElementById('sendSMS').setAttribute('data-phone', phone);
-               document.getElementById('sendmail').setAttribute('data-name', name);
-               document.getElementById('sendmail').setAttribute('data-email', email);
+               const smsForm = document.getElementById('sms-form');
+               smsForm.value = phone;
+               const smsFormLink = document.getElementById('sms-form-link');
+               smsFormLink.value = data.upload_link;
+               const smsFormName = document.getElementById('sms-form-name');
+               smsFormName.value = name;
+               const mailForm = document.getElementById('mail-form');
+               mailForm.value = email;
+               const mailFormLink = document.getElementById('mail-form-link');
+               mailFormLink.value = data.upload_link;
+               const mailFormName = document.getElementById('mail-form-name');
+               mailFormName.value = name;
             })
             .catch(error => {
                console.error('Error generating upload link:', error);
@@ -252,9 +272,6 @@
    // Attach event listener to close modal button
    document.querySelector('.close-modal').addEventListener('click', closeModal);
 
-   // Attach event listener to cancel button inside modal
-   document.getElementById('cancelSendLink').addEventListener('click', closeModal);
-
    // Close modal when clicking outside of the modal content
    window.addEventListener('click', (e) => {
      const modal = document.getElementById('linkModal');
@@ -262,61 +279,6 @@
       closeModal();
      }
    });
-
-   // send sms via api
-   function sendSMS() {
-      const profileLink = document.getElementById('profileLink');
-      const url = profileLink.value;
-      const phone = '2348130000000';  // Replace with recipient's phone number
-      const message = `Hello, please upload your documents here: ${url}`;
-      const api_key = 'YOUR_API_KEY';  // Replace with your API key
-      const api_url = `https://api.smsmobile24.com/send?api_key=${api_key}&to=${phone}&msg=${message}&sender_id=SMSMobile24`;
-      
-      fetch(api_url)
-      .then(response => response.json())
-      .then(data => {
-        console.log('SMS sent:', data);
-        alert('SMS sent successfully');
-      })
-      .catch(error => {
-        console.error('Error sending SMS:', error);
-        alert('Failed to send SMS');
-      });
-   }
-
-   // Attach event listener to send SMS button
-   document.getElementById('sendSMS').addEventListener('click', sendSMS);
-
-   // send email via api
-   function sendEmail() {
-      const profileLink = document.getElementById('profileLink');
-      const url = profileLink.value;
-      const api_url = 'http://localhost:5000/send_email'; 
-      const data = {
-         email: document.getElementById('sendmail').getAttribute('data-email'),
-         shared_link: url
-      };
-      fetch(api_url, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(data => {
-         console.log('Email sent:', data);
-         alert('Email sent successfully');
-      })
-      .catch(error => {
-         console.error('Error sending email:', error);
-         alert('Failed to send email');
-      });
-   }
-
-   // Attach event listener to send email button
-   document.getElementById('sendmail').addEventListener('click', sendEmail);
-
    
   </script>
   
