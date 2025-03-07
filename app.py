@@ -42,7 +42,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
-app.config['SMS_TOKEN'] = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTZDRDEwNzc3M0EzMzREOSIsImlhdCI6MTczNjIyNjYwMywiZXhwIjoxODkzOTA2NjAzfQ.10OgqhCRW6H0hsn-2KwK0hRmDsscT_HGkSmf2RTI9ztzH6bMDNMdepZ-TnmTt3C5N0SqY1jn2XZMuzil4T-lMQ"
+app.config['SMS_TOKEN'] = ""
 
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
