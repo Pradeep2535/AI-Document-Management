@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="static\css\chatbot.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  
+
+  <style>
+        /* From Uiverse.io by btongheng */ 
+    .button {
+    --😀: #644dff;
+    --😀😀: #4836bb;
+    --😀😀😀: #654dff63;
+    cursor: pointer;
+    width: 184px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1.125em;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #fff;
+    background: var(--😀);
+    border: 2px solid var(--😀😀);
+    border-radius: .75rem;
+    box-shadow: 0 8px 0 var(--😀😀);
+    transform: skew(-10deg);
+    transition: all .1s ease;
+    filter: drop-shadow(0 15px 20px var(--😀😀😀));
+    }
+
+    .button:active {
+    letter-spacing: 0px;
+    transform: skew(-10deg) translateY(8px);
+    box-shadow: 0 0 0 var(--😀😀😀);
+    }
+    .attractive-text {
+  font-family: 'Poppins', sans-serif; /* Modern and clean font */
+  font-size: 48px; /* Large, attention-grabbing size */
+  font-weight: 700; /* Bold text */
+  text-align: center; /* Center the text horizontally */
+  color: #3498db; /* Eye-catching blue color */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  letter-spacing: 2px; /* Slight spacing for readability */
+  margin: 0px 0; /* Spacing around the text */
+  background: linear-gradient(90deg, #ff7eb3, #ff758c, #ff9a6c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Gradient color in text */
+  transition: transform 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+.attractive-text:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+  </style>
+</head>
+<body>
+   <div class="container">
+      <aside style="position: fixed;">
+        
+         <div class="top">
+           <div class="logo">
+             <h2> <span class="danger">Appian</span> </h2>
+           </div>
+           <div class="close" id="close_btn">
+            <span class="material-symbols-sharp">
+              close
+              </span>
+           </div>
+         </div>
+         
+          <div class="sidebar">
+
+            <a href="/">
+              <span class="material-symbols-sharp">grid_view </span>
+              <h3>Dashbord</h3>
+           </a>
+           <a href="/customer">
+              <span class="material-symbols-sharp">person_outline </span>
+              <h3>Customers</h3>
+           </a>
+           <a href="/chat" class="active">
+              <span class="material-symbols-sharp">mail_outline </span>
+              <h3>Assistant</h3>
+           
+           </a>
+           <a href="/upload">
+              <span class="material-symbols-sharp">receipt_long </span>
+              <h3>Upload</h3>
+           </a>
+           <a href="/transaction">
+              <span class="material-symbols-sharp">report_gmailerrorred </span>
+              <h3>Upload History</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">settings </span>
+              <h3>settings</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">add </span>
+              <h3>Add policy</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">logout </span>
+              <h3 id="logoutButton">logout</h3>
+
+               
+                <div id="dialogBox" class="dialog-box">
+                    <div class="dialog-content">
+                        <h3>Are you sure you want to log out?</h3>
+                        <div class="dialog-actions">
+                            <button id="confirmLogout" class="confirm-btn">Yes</button>
+                            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+           </a>
+             
+
+
+          </div>
+
+      </aside>
+      <div class="encloser">
+        <div id="btn-btn" style="margin-bottom:20px; margin-top:120px; margin-left:460px; text-align: center; display:block;">
+            <p style="font-size: 18px; color: gray; margin: 0;">Your AI Companion</p>
+            <h1 class="attractive-text">Personalize Chatbot</h1>
+          </div>
+        <div class="details" id="details" style="margin-left:460px; margin-top:20px;">
+            <h2> Enter Account Number</h2><br>
+            <form id="textForm" class="flex-container-1">
+              <div>
+            <input id="account-number" class="input" placeholder="Account Number">
+              </div>
+              <div style="align-item:center;">
+            <button type="submit" style="margin-left:60px;" class="naya">Submit</button>
+              </div>
+            </form>
+            <p id="result"></p>
+        </div>
+        <div class="spinner-container" id="spinner" style="display:none;">
+            <div class="spinner">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        <div class="chat-container" id="chat-container" style="border-radius:30px; margin-left:250px;margin-top:60px; width:75vw; height:130vh;">
+            <div class="chat-header">
+                <div class="chat-logo">
+                    <img src="static/assets/icons8-chatbot-80.png" alt="Logo">
+                </div>
+                <div class="chat-title">Appian Bot</div> 
+            </div>
+        
+            <div class="chat-body" id="chat-body">
+            </div>
+        
+            <div class="input-container">
+                <input type="text" id="user-input" placeholder="Type a message..." onkeydown="handleEnter(event)">
+                <div class="button-container">
+                    <button id="send-btn" onclick="sendMessage()">➤</button>
+                    <button id="clear-chat-btn" onclick="clearChat()">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+
+   <script src="/static/js/chatbot.js"></script>
+</body>
+</html>

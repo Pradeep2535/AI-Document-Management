@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/upload.css">
+</head>
+<body>
+   <div class="container">
+      <aside style="position: fixed;">
+        
+         <div class="top">
+           <div class="logo">
+             <h2> <span class="danger">Appian</span> </h2>
+           </div>
+           <div class="close" id="close_btn">
+            <span class="material-symbols-sharp">
+              close
+              </span>
+           </div>
+         </div>
+         
+          <div class="sidebar">
+
+            <a href="/">
+              <span class="material-symbols-sharp">grid_view </span>
+              <h3>Dashbord</h3>
+           </a>
+           <a href="/customer">
+              <span class="material-symbols-sharp">person_outline </span>
+              <h3>Customers</h3>
+           </a>
+           <a href="/chat">
+              <span class="material-symbols-sharp">mail_outline </span>
+              <h3>Assistant</h3>
+           
+           </a>
+           <a href="/upload">
+              <span class="material-symbols-sharp">receipt_long </span>
+              <h3>Upload</h3>
+           </a>
+           <a href="/transaction_history" class="active">
+              <span class="material-symbols-sharp">report_gmailerrorred </span>
+              <h3>Upload History</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">settings </span>
+              <h3>settings</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">add </span>
+              <h3>Add policy</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">logout </span>
+              <h3 id="logoutButton">logout</h3>
+
+               
+                <div id="dialogBox" class="dialog-box">
+                    <div class="dialog-content">
+                        <h3>Are you sure you want to log out?</h3>
+                        <div class="dialog-actions">
+                            <button id="confirmLogout" class="confirm-btn">Yes</button>
+                            <button id="cancelLogout" class="cancel-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+           </a>
+             
+
+
+          </div>
+
+      </aside>
+      
+      <div class="container-2" style="margin-left:450px; margin-top:100px">
+        <h1 style="margin-bottom:25px;">Upload History</h1>
+
+        <form id="filterForm">
+          
+          <div class="filter-group">
+              <label for="date">Select Date:</label>
+              <input type="date" id="date" name="date" placeholder="yyyy-mm-dd">
+          </div>
+  
+          
+          <div class="filter-group">
+              <label for="hours">Select Hours:</label>
+              <select id="hours" name="hours">
+                  <option value="all">Select time</option>
+                  <option value="0-1">0-1</option>
+                  <option value="1-2">1-2</option>
+                  <option value="2-3">2-3</option>
+                  <option value="3-4">3-4</option>
+                  <option value="4-5">4-5</option>
+                  <option value="5-6">5-6</option>
+                  <option value="6-7">6-7</option>
+                  <option value="7-8">7-8</option>
+                  <option value="8-9">8-9</option>
+                  <option value="9-10">9-10</option>
+                  <option value="10-11">10-11</option>
+                  <option value="11-12">11-12</option>
+                  <option value="12-13">12-13</option>
+                  <option value="13-14">13-14</option>
+                  <option value="14-15">14-15</option>
+                  <option value="15-16">15-16</option>
+                  <option value="16-17">16-17</option>
+                  <option value="17-18">17-18</option>
+                  <option value="18-19">18-19</option>
+                  <option value="19-20">19-20</option>
+                  <option value="20-21">20-21</option>
+                  <option value="21-22">21-22</option>
+                  <option value="22-23">22-23</option>
+                  <option value="23-24">23-24</option>
+              </select>
+          </div>
+  
+         
+          <div class="filter-group">
+              <button type="submit" id="submitFilter">Filter</button>
+          </div>
+          <table id="table-transaction-id" class="transaction-table">
+            <thead>
+              <tr>
+                <th>Account Number</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Uploaded Time</th>
+                <th>Uploaded Documents</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+            </tbody>
+          </table>
+          <div class="spinner-container" id="spinner" style="display:none;">
+            <div class="spinner">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          
+          <div id="dialog-box" class="dialog-box-2">
+            <i class="fas fa-times-circle" style="margin:20px;"></i> 
+          </br>
+            No records found.
+          </div>
+        
+    </div>
+    
+     
+      
+   </div>
+
+
+
+   <script>
+    const tableBody = document.getElementById('table-transaction-id');
+    tableBody.style.display = 'none';
+document.getElementById('filterForm').onsubmit = async function (e) {
+    e.preventDefault();
+    document.getElementById('spinner').style.display = 'block';
+    const selectedDate = document.getElementById('date').value;
+    const selectedHours = document.getElementById('hours').value;
+   
+    const [startHour, endHour] = selectedHours.split("-");
+
+    
+    const startTime = startHour.padStart(2, '0') + ":00";  
+    const endTime = endHour.padStart(2, '0') + ":00";  
+    console.log(startTime);
+    console.log(endTime);
+    console.log('Selected Date:', selectedDate);
+    console.log('Selected Hours:', selectedHours);
+    
+    const transaction_response = await fetch('/transaction_history', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          "selected_date":selectedDate,
+          "start_hour":startTime,
+          "end_hour":endTime
+
+      })
+  });
+
+  response_result = await transaction_response.json();
+  result = response_result.rows_list;
+  console.log(result)
+  if (result.length === 0) {
+  console.log("No uploads found - keep dialog box");
+  
+  const table = document.getElementById('table-transaction-id');
+  table.style.display = 'none';
+
+  
+  const dialogBox = document.getElementById('dialog-box');
+  dialogBox.style.display = 'block';
+  document.getElementById('spinner').style.display = 'none';
+} 
+  else{
+  populateTransactionTable(result);
+  const dialogBox = document.getElementById('dialog-box');
+  dialogBox.style.display = 'none';
+  document.getElementById('spinner').style.display = 'none';
+  const tableBody = document.getElementById('table-transaction-id');
+  tableBody.style.display = 'block';
+  }
+    
+};
+
+
+
+function populateTransactionTable(data) {
+    const tableBody = document.querySelector('.transaction-table tbody');
+    tableBody.innerHTML = ""; 
+
+    data.forEach((transaction) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+            <td>${transaction.account_number}</td>
+            <td>${transaction.uploaded_date}</td>
+            <td>${transaction.name}</td>
+            <td>${transaction.uploaded_time}</td>
+            <td>${transaction.uploaded_documents}</td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
+
+
+
+   </script>
+</body>
+</html>

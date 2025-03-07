@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI/UX</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <!-- Include FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/upload.css">
+  <style>
+    /* Styling remains the same */
+
+    .container-2 {
+        margin-left:230px;
+        margin-bottom:80px;
+        width:130%;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 30px;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+    }
+
+    th {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: #fff;
+        font-size: 18px;
+    }
+
+    td {
+        background-color: #f9f9f9;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover td {
+        background-color: #f1f5ff;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 28px;
+        color: #333;
+    }
+
+    .view-button {
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .view-button:hover {
+        background: linear-gradient(to right, #2575fc, #6a11cb);
+        transform: scale(1.05);
+    }
+
+    .spinner-container {
+  position: fixed; /* Ensure it stays on top of other content */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  display: flex; /* Flexbox for centering */
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  background-color: rgba(255, 255, 255, 0.8); /* Optional: Light overlay */
+  z-index: 9999; /* Ensure it is above other elements */
+}
+
+/* Spinner styles */
+.spinner {
+  width: 70.4px;
+  height: 70.4px;
+  --clr: rgb(247, 197, 159);
+  --clr-alpha: rgba(247, 197, 159, 0.1);
+  animation: spinner 1.6s infinite ease;
+  transform-style: preserve-3d;
+
+  /* Centering */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.spinner > div {
+  background-color: var(--clr-alpha);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  border: 3.5px solid var(--clr);
+}
+
+.spinner div:nth-of-type(1) {
+  transform: translateZ(-35.2px) rotateY(180deg);
+}
+
+.spinner div:nth-of-type(2) {
+  transform: rotateY(-270deg) translateX(50%);
+  transform-origin: top right;
+}
+
+.spinner div:nth-of-type(3) {
+  transform: rotateY(270deg) translateX(-50%);
+  transform-origin: center left;
+}
+
+.spinner div:nth-of-type(4) {
+  transform: rotateX(90deg) translateY(-50%);
+  transform-origin: top center;
+}
+
+.spinner div:nth-of-type(5) {
+  transform: rotateX(-90deg) translateY(50%);
+  transform-origin: bottom center;
+}
+
+.spinner div:nth-of-type(6) {
+  transform: translateZ(35.2px);
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+  }
+
+  50% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+  }
+
+  100% {
+    transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+  }
+}
+
+
+/* Modal Background */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background for better contrast */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.3s ease; /* Smooth fade-in/out transition */
+}
+
+/* Modal content box */
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    width: 320px;
+    animation: slideIn 0.4s ease-in-out; /* Slide-in animation */
+    position: relative;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 25px;
+    color: #888;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #e74c3c; /* Red color on hover */
+}
+
+/* Modal Title */
+.modal-content h1 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Modal Paragraph */
+.modal-content p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Select Styling */
+.styled-select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect on select */
+.styled-select:hover {
+    background-color: #f1f1f1;
+}
+
+/* Option Styling */
+.styled-select option {
+    font-size: 16px;
+    color: #333;
+    padding: 10px;
+}
+
+/* Animation for modal content */
+@keyframes slideIn {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+.attractive-text {
+  font-family: 'Poppins', sans-serif; /* Modern and clean font */
+  font-size: 48px; /* Large, attention-grabbing size */
+  font-weight: 700; /* Bold text */
+  text-align: center; /* Center the text horizontally */
+  color: #3498db; /* Eye-catching blue color */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  letter-spacing: 2px; /* Slight spacing for readability */
+  margin: 20px 0; /* Spacing around the text */
+  background: linear-gradient(90deg, #ff7eb3, #ff758c, #ff9a6c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Gradient color in text */
+  transition: transform 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+.attractive-text:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+</style>
+</head>
+<body>
+   <div class="container">
+      <aside style="position: fixed;">
+        
+         <div class="top">
+           <div class="logo">
+             <h2><span class="danger">Appian</span> </h2>
+           </div>
+           <div class="close" id="close_btn">
+            <span class="material-symbols-sharp">
+              close
+              </span>
+           </div>
+         </div>
+         <!-- end top -->
+          <div class="sidebar">
+
+            <a href="/">
+              <span class="material-symbols-sharp">grid_view </span>
+              <h3>Dashbord</h3>
+           </a>
+           <a href="/customer">
+              <span class="material-symbols-sharp">person_outline </span>
+              <h3>Customers</h3>
+           </a>
+
+           <a href="/chat">
+              <span class="material-symbols-sharp">mail_outline </span>
+              <h3>Assistant</h3>
+           
+           </a>
+           <a href="/upload" class="active">
+              <span class="material-symbols-sharp">receipt_long </span>
+              <h3>Upload</h3>
+           </a>
+           <a href="/transaction">
+            <span class="material-symbols-sharp">report_gmailerrorred </span>
+            <h3>Upload History</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">settings </span>
+              <h3>settings</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">add </span>
+              <h3>Add policy</h3>
+           </a>
+           <a href="#">
+              <span class="material-symbols-sharp">logout </span>
+              <h3 id="logoutButton">logout</h3>
+
+               <!-- Dialog Box -->
+                <div id="dialogBox" class="dialog-box">
+                    <div class="dialog-content">
+                        <h3>retry......</h3>
+                        <div class="dialog-actions">
+                            <button id="retryButton">retry</button>
+                        </div>
+                    </div>
+                </div>
+           </a>
+             
+
+
+          </div>
+
+      </aside>
+      <!-- --------------
+        end asid
+      -------------------- -->
+
+      <!-- --------------
+        start main part
+      --------------- -->
+
+      <main>
+        <div class="dashboard-item"> 
+            <div id="btn-btn" style="margin-bottom:20px; margin-top:20px; margin-left:60px; text-align: center; display:block;">
+                <p style="font-size: 18px; color: gray; margin: 0;">Your AI Companion</p>
+                <h1 class="attractive-text">Upload Document</h1>
+              </div>
+          
+
+           <div class="flex-container" style="margin-left:120px;">
+            <div class="container-1">
+                <div class="folder">
+                  <div class="front-side">
+                    <div class="tip"></div>
+                    <div class="cover"></div>
+                  </div>
+                  <div class="back-side cover"></div>
+                </div>
+                <form id="uploadForm">
+                  <label class="custom-file-upload">
+                      <input type="file" id="upload" name="file" accept=".pdf,.jpg,.jpeg,.png" required/>
+                      Choose a file
+                  </label>
+                  <button type="submit" class="upload-btn">Upload</button>
+              </form>
+              <div id="successModal-1" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeModal-1" class="close">&times;</span>
+                    <h1>Successfully</h1>
+                    <p>File uploaded successfully!</p>
+                </div>
+            </div>
+            <div id="successModal-2" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeModal-2" class="close">&times;</span>
+                    <h1 class="modal-title">Multiple Accounts</h1>
+                    <p>Select the below account</p>
+                
+                </div>
+            </div>
+            
+        </div>
+       <!-- end insights -->
+        </div>
+        <div class="spinner-container" id="spinner" style="display:none;">
+            <div class="spinner">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        <div class="container-2" id="container-2" style="display:none; margin-left:0px; width:120%; margin-right:30px;">
+          <h1>Multiple accounts found</h1>
+          <table id="customerTable">
+              <thead>
+                  <tr>
+                      <th>Account No.</th>
+                      <th>Customer Name</th>
+                      <th>Actions</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Rows will be added dynamically -->
+              </tbody>
+          </table>
+      </div>
+    </main>
+    
+
+
+
+
+   <script >
+    const retryButton = document.getElementById("retryButton");
+
+// Add click event listener to the button
+retryButton.addEventListener("click", function () {
+    dialogBox.style.display = "block"; // Show the dialog box
+ });
+    document.getElementById('uploadForm').onsubmit = async function (e) {
+      e.preventDefault();
+    document.getElementById('spinner').style.display = 'block';
+      
+      let formData = new FormData();
+      let fileInput = document.getElementById('upload');
+
+
+      formData.append("file", fileInput.files[0]);
+
+      const response = await fetch('/upload_file', {
+          method: 'POST',
+          body: formData
+      });
+
+      var result = await response.json();
+      console.log(result);
+      console.log('djjjjjjjh');
+      const responseDiv = document.getElementById('response');
+      //console.log(result);
+      if (result.upload_status === 'success') {
+        console.log('1112222222222222');
+          //responseDiv.innerHTML = '<p>File uploaded successfully!</p>';
+         document.getElementById('spinner').style.display = 'none';
+          const modal = document.getElementById('successModal-1');
+            modal.style.display = 'flex';
+
+            // Close modal when the close button is clicked
+            document.getElementById('closeModal-1').onclick = function () {
+                modal.style.display = 'none';
+            };
+            let container_2 = document.getElementById("container-2");
+            container_2.style.display = "none";
+            // Close modal when clicking outside the modal content
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+      } else if (result.upload_status === 'display_accounts') {
+        const spinner = document.getElementById('spinner');
+        let container_2 = document.getElementById("container-2");
+      container_2.style.display = "block";
+console.log('huuuuuuu');
+        spinner.style.display = 'none';
+        const modal = document.getElementById('successModal-2');
+            modal.style.display = 'flex';
+            
+            // Close modal when the close button is clicked
+            document.getElementById('closeModal-2').onclick = function () {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside the modal content
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+
+                }
+            };
+          //responseDiv.innerHTML = '<p>Multiple accounts found. Please choose one:</p>';
+
+          populateTable(result);
+
+      } else {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'none';
+          responseDiv.innerHTML = `<p>Upload failed: ${result.upload_status}</p>`;
+      }
+  };
+
+  async function selectAccount(account, file_document, document_type,file_data) {
+      const response = await fetch('/upload_file_selected_account', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              account,
+              file_document,
+              document_type,
+              file_data
+          })
+      });
+      let container_2 = document.getElementById("container-2");
+                    container_2.style.display = "none";
+      const spinner = document.getElementById('spinner');
+        spinner.style.display = 'none';
+      const result = await response.json();
+      console.log("--------------------------------------------------------------");
+      console.log(result);
+      //document.getElementById('response').innerHTML = `<p>${result.message}</p>`;
+      if (result.upload_status === 'success') {
+        // Show the modal dialog
+        console.log('1333333333333333333333');
+        console.log("ooooooooooooooo");
+        console.log(result);
+        console.log(result.acc_no);
+        const modal = document.getElementById('successModal-1');
+        modal.style.display = 'flex';
+
+        // Update modal content if needed
+        const modalContent = modal.querySelector('p');
+        modalContent.innerHTML = `File uploaded successfully! Account Number: ${result.acc_no}`;
+
+        // Close modal when the close button is clicked
+        document.getElementById('closeModal-1').onclick = function () {
+            modal.style.display = 'none';
+
+        };
+        // Show spinner
+
+        // Close modal when clicking outside the modal content
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+  }
+  // -----------------------------------------------------------------------------------------
+
+ 
+// Function to generate Customer ID
+function generateCustomerID(index,result) {
+  console.log(result.accounts[index].name);
+    return result.accounts[index].name;
+}
+
+// Function to generate Customer Names
+function generateCustomerName(index,result) {
+  console.log(result.accounts[index].acc_no);
+    return result.accounts[index].acc_no;
+}
+
+// Function to populate table
+function populateTable(result) {
+  const len = result.accounts.length;
+    const tableBody = document.querySelector("#customerTable tbody");
+
+    for (let i = 0; i < len; i++) { // Loop through accounts
+        const newRow = document.createElement("tr");
+
+        // Generate and append Customer ID
+        const customerIdCell = document.createElement("td");
+        const customerId = generateCustomerID(i,result);
+        console.log(customerId);
+        customerIdCell.textContent = customerId;
+        newRow.appendChild(customerIdCell);
+
+        // Generate and append Customer Name
+        const customerNameCell = document.createElement("td");
+        const customerName = generateCustomerName(i,result);
+        console.log(customerName);
+        customerNameCell.textContent = customerName;
+        newRow.appendChild(customerNameCell);
+
+        const customerMongoId = result.accounts[i]._id;
+        // Add "View" button in a new column
+        const actionsCell = document.createElement("td");
+        const viewButton = document.createElement("button");
+        viewButton.textContent = "Select";
+        viewButton.className = "view-button";
+
+        // Add click event to the View button
+        viewButton.addEventListener("click", () => {
+            console.log(`Customer ID: ${customerId}, Customer Name: ${customerName} id : ${customerMongoId}`);
+            let filedocument = result.file_document;
+            filedocument.file_name = `${customerName}_${result.document_type}`;
+            console.log(filedocument); 
+            const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';
+            selectAccount(result.accounts[i], filedocument, result.document_type, result.file_data);
+            //alert(`Customer Details\n\nID: ${customerId}\nName: ${customerName}`);
+        });
+
+        actionsCell.appendChild(viewButton);
+        newRow.appendChild(actionsCell);
+
+        tableBody.appendChild(newRow);
+    }
+}
+
+// Populate table on page load
+window.onload = populateTable;
+   </script>
+</body>
+</html>

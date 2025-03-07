@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+    <title>Shared Upload</title>
+</head>
+<body>
+    <h1>Shared Upload</h1>
+    <!-- display user name and email from user_data-->
+    <p>Welcome, {{ user_data['user_name'] }} ({{ user_data['email'] }})</p>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type="submit" value="Upload" />
+    </form>
+</body>
+</html> 
